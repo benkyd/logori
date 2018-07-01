@@ -1,0 +1,14 @@
+{
+  "name": "logori",
+  "version": "1.0.0",
+  "description": "A discord bot intended to complete the audit log",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alejandro W. Sior",
+  "license": "MIT",
+  "dependencies": {
+    "eris": "^0.8.6"
+  }
+}
