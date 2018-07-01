@@ -1,8 +1,6 @@
-const Eris = require('eris');
 const configM = require('./src/configManager');
 const logger = require('./src/logger');
-const commandL = require('./src/commandLoader');
-
+const commandH = require('./src/commandHandler');
 // TODO: botClient.js
 
 if (!configM.loadConfig('./config.json')) {
@@ -10,10 +8,11 @@ if (!configM.loadConfig('./config.json')) {
 }
 logger.log('Config loaded');
 
-commandL.load();
+const bot = require('./src/botClient').bot;
+
+require('./src/commandLoader').load();
 logger.log('Commands loaded');
 
-var bot = new Eris(configM.config.token);
 bot.on('ready', () => {
     logger.log(bot.user.username + '#' + bot.user.discriminator);
     bot.editStatus('online', {
@@ -24,9 +23,12 @@ bot.on('ready', () => {
 });
 
 bot.on("messageCreate", (msg) => {
-    if(msg.content === "!ping") {
-        bot.createMessage(msg.channel.id, "Pong!");
-    }
+    let content = msg.content.replace(new RegExp(`^(?:<@${bot.user.id}> +|\\*)\\b`), '');
+    if (content === msg.content) return;
+    if (msg.author.bot) return;
+    if (msg.author === bot.user) return;
+    let trimmedContent = content.trim();
+    commandH.apply(trimmedContent, msg);
 });
 
 bot.connect();

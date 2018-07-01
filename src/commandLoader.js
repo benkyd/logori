@@ -7,7 +7,7 @@ module.exports.load = function load() {
     if (file.endsWith('.js')) {
       let plugin = require(`./cmd/${file}`);
       if (plugin.loadModule) {
-        plugin.loadModule(commandH);
+        plugin.loadModule();
         logger.log(`${file} loaded`);
       }
     }
