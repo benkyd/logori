@@ -123,6 +123,11 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
+      guildMemberKick: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
       guildMemberUpdate: {
         d: true,
         msg: '',
