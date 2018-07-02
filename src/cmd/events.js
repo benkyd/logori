@@ -163,9 +163,9 @@ exports.loadModule = function loadModule () {
   });
   bot.on('guildBanAdd', async (guild, user) => {
     try {
-      let a = await dbEI.getEvent(channel.guild.id, 'guildBanAdd');
+      let a = await dbEI.getEvent(guild.id, 'guildBanAdd');
       if (a.event.d === true) {
-        let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
         let hb = "";
         if (a.event.msg.includes("$hastebin")) {
@@ -175,6 +175,35 @@ exports.loadModule = function loadModule () {
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Audit Log Informations !\n\n';
           hastebinMessage += 'Additional informations on the ban :\n';
+          hastebinMessage += 'Reason :\n\n';
+          hastebinMessage += entry.reason + '\n\n';
+          hastebinMessage += 'Responsible :\n';
+          hastebinMessage += JSON.stringify(entry.user) + '\n';
+          hastebinMessage += entry.user.username + '#' + entry.user.discriminator + ' with id ' + entry.user.id;
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$responsibleId', entry.user.id).replace('$user', user.username + '#' + user.discriminator).replace('$userId', user.id).replace('$hastebin', hb).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildBanRemove', async (guild, user) => {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildBanRemove');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = "";
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'User unbanned :\n';
+          hastebinMessage += JSON.stringify(user) + '\n';
+          hastebinMessage += user.username + '#' + user.discriminator + ' with id ' + user.id + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Audit Log Informations !\n\n';
+          hastebinMessage += 'Additional informations on the unban :\n';
           hastebinMessage += 'Reason :\n\n';
           hastebinMessage += entry.reason + '\n\n';
           hastebinMessage += 'Responsible :\n';
