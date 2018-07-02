@@ -17,7 +17,7 @@ exports.loadModule = function loadModule () {
   commandH.endpoint('^debugserv$', async (match, message) => {
     dbEI.debugServer(message.channel.guild.id);
   });
-  commandH.endpoint('^set-channel(?: <#(.+?)>)?$', async (match, message) => {
+  commandH.endpoint('^set-fallback(?: <#(.+?)>)?$', async (match, message) => {
     let channelId = message.channel.id;
     if (match[1]) {
       channelId = match[1];
@@ -25,7 +25,7 @@ exports.loadModule = function loadModule () {
     // TODO: Check if the set channel is in this guild
     dbEI.setFallbackChannel(message.channel.guild.id, channelId);
     bot.createMessage(message.channel.id, 'Fallback set to that channel, all the event logging will be done there by default. A message will be sent in that channel to make sure it is correct.');
-    bot.createMessage(channelId, `<@${message.author.id}>, this is now the fallback channel.`);
+    bot.createMessage(channelId, `<@${message.author.id}>, this is now the fallback channel for all the events.`);
   });
   commandH.endpoint('^event(?:-set)? (.+) msg (.+)$', async (match, message) => {
     dbEI.setEventMsg(message.channel.guild.id, match[1], match[2]);
