@@ -98,7 +98,17 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
-      guildEmojisUpdate: {
+      guildEmojiAdd: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      guildEmojiUpdate: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      guildEmojiDelete: {
         d: true,
         msg: '',
         c: 'f',

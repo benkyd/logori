@@ -161,6 +161,7 @@ exports.loadModule = function loadModule () {
       console.log(e);
     }
   });
+  // Do another option to have a Pollr type of thing for ban, unban and kick
   bot.on('guildBanAdd', async (guild, user) => {
     try {
       let a = await dbEI.getEvent(guild.id, 'guildBanAdd');
@@ -217,6 +218,121 @@ exports.loadModule = function loadModule () {
     }
     catch(e) {
       console.log(e);
+    }
+  });
+  async function guildEmojiAdd(guild, emojis, oldEmojis) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildEmojiAdd');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = "";
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'Gateway info :\n';
+          hastebinMessage += 'New emojis array\n\n';
+          hastebinMessage += JSON.stringify(emojis) + '\n\n';
+          hastebinMessage += 'Old emojis array\n\n';
+          hastebinMessage += JSON.stringify(oldEmojis) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Audit Log Moment of the day !\n\n';
+          hastebinMessage += 'State of the emoji before :\n';
+          hastebinMessage += JSON.stringify(entry.before) + ' (no way, it\'s the emoji create event also, what did you expect)\n\n';
+          hastebinMessage += 'State of the emoji after :\n\n';
+          hastebinMessage += JSON.stringify(entry.after) + '\n\n';
+          hastebinMessage += 'Full emoji object à la audit log :\n\n';
+          hastebinMessage += JSON.stringify(entry.target) + '\n\n';
+          hastebinMessage += 'Responsible :\n\n';
+          hastebinMessage += JSON.stringify(entry.user) + '\n';
+          hastebinMessage += entry.user.username + '#' + entry.user.discriminator + ' with id ' + entry.user.id;
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$responsibleId', entry.user.id).replace('$emoji', entry.target.name).replace('$emojiId', entry.target.id).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
+  async function guildEmojiUpdate(guild, emojis, oldEmojis) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildEmojiUpdate');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = "";
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'Gateway info :\n';
+          hastebinMessage += 'New emojis array\n\n';
+          hastebinMessage += JSON.stringify(emojis) + '\n\n';
+          hastebinMessage += 'Old emojis array\n\n';
+          hastebinMessage += JSON.stringify(oldEmojis) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Audit Log Thing !\n\n';
+          hastebinMessage += 'State of the emoji before :\n';
+          hastebinMessage += JSON.stringify(entry.before) + ' (yep, this time it\'s an update)\n\n';
+          hastebinMessage += 'State of the emoji after :\n\n';
+          hastebinMessage += JSON.stringify(entry.after) + '\n\n';
+          hastebinMessage += 'Full emoji object à la audit log :\n\n';
+          hastebinMessage += JSON.stringify(entry.target) + '\n\n';
+          hastebinMessage += 'Responsible :\n\n';
+          hastebinMessage += JSON.stringify(entry.user) + '\n';
+          hastebinMessage += entry.user.username + '#' + entry.user.discriminator + ' with id ' + entry.user.id;
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$responsibleId', entry.user.id).replace('$emoji', entry.target.name).replace('$emojiId', entry.target.id).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
+  async function guildEmojiDelete(guild, emojis, oldEmojis) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildEmojiDelete');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = "";
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'Gateway info :\n';
+          hastebinMessage += 'New emojis array\n\n';
+          hastebinMessage += JSON.stringify(emojis) + '\n\n';
+          hastebinMessage += 'Old emojis array\n\n';
+          hastebinMessage += JSON.stringify(oldEmojis) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Audit Log:tm: Again:tm: !\n\n';
+          hastebinMessage += 'State of the emoji before :\n';
+          hastebinMessage += JSON.stringify(entry.before) + '\n\n';
+          hastebinMessage += 'State of the emoji after :\n\n';
+          hastebinMessage += JSON.stringify(entry.after) + ' (nope again, it\'s a delete event smh)\n\n';
+          hastebinMessage += 'Full emoji object à la audit log :\n\n';
+          hastebinMessage += JSON.stringify(entry.target) + '\n\n';
+          hastebinMessage += 'Responsible :\n\n';
+          hastebinMessage += JSON.stringify(entry.user) + '\n';
+          hastebinMessage += entry.user.username + '#' + entry.user.discriminator + ' with id ' + entry.user.id;
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$responsibleId', entry.user.id).replace('$emoji', oldEmojis[0].name).replace('$emojiId', oldEmojis[0].id).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
+  bot.on('guildEmojisUpdate', async (guild, emojis, oldEmojis) => {
+    let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+    let entry = auditlog.entries[0];
+    if (entry.actionType === 60) {
+      return guildEmojiAdd(guild, emojis, oldEmojis);
+    }
+    else if (entry.actionType === 61) {
+      return guildEmojiUpdate(guild, emojis, oldEmojis);
+    }
+    else if (entry.actionType === 62) {
+      return guildEmojiDelete(guild, emojis, oldEmojis);
     }
   });
 };
