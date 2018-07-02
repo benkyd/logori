@@ -12,6 +12,7 @@ module.exports.loadConfig = function loadConfig(configPath) {
     let builder = {
       token: "YOUR BOT TOKEN HERE",
       game: "BOT GAME HERE",
+      hastebinServer: "https://hastebin.com",
     };
     fs.appendFileSync(configPath, JSON.stringify(builder));
     return false;

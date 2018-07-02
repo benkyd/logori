@@ -47,6 +47,7 @@ exports.loadModule = function loadModule () {
       bot.createMessage(message.channel.id, `Event channel set to <#${channelId}>. The fallback channel for that even has been overriden. To bind again the event to the fallback channel, execute \`event ${match[1]} channel fallback\``);
     }
   });
+    // Change the endpoint below, put something that couldn't interfere with the other
   commandH.endpoint('^event(-set)? (.+) (.+)$', async (match, message) => {
     let newState = true;
     if (match[3]) {
