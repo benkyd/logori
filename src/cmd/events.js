@@ -15,7 +15,6 @@ exports.loadModule = function loadModule () {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
         let entry = auditlog.entries[0];
-        console.log(entry);
         let hb = "";
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'Gateway Event Info :\n';
@@ -55,11 +54,10 @@ exports.loadModule = function loadModule () {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
         let entry = auditlog.entries[0];
-        console.log(entry);
         let hb = "";
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'Gateway Event Info :\n';
-          hastebinMessage += 'Channel Removed' + channel.name + ' data as JSON\n\n';
+          hastebinMessage += 'Channel Removed ' + channel.name + ' data as JSON\n\n';
           hastebinMessage += JSON.stringify(channel) + '\n\n';
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Audit Log Time !\n\n';
@@ -77,7 +75,7 @@ exports.loadModule = function loadModule () {
         }
         let mention = channel.mention;
         if (channel.type === 2) mention.shift();
-        let finalMessage = a.event.msg.replace('$type', type).replace('$mention', mention).replace('$id', channel.id).replace('$timestamp', channel.createdAt).replace('$hastebin', hb).replace('$name', channel.name).replace('$user', entry.user.username + '#' + entry.user.discriminator).replace('$userId', entry.user.id);
+        let finalMessage = a.event.msg.replace('$type', type).replace('$id', channel.id).replace('$timestamp', channel.createdAt).replace('$hastebin', hb).replace('$name', channel.name).replace('$user', entry.user.username + '#' + entry.user.discriminator).replace('$userId', entry.user.id);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
@@ -156,6 +154,35 @@ exports.loadModule = function loadModule () {
         let mentionOld = oldChannel.mention;
         if (channel.type === 2) mentionOld.shift();
         let finalMessage = a.event.msg.replace('$type', type).replace('$mention', mention).replace('$id', channel.id).replace('$timestamp', channel.createdAt).replace('$hastebin', hb).replace('$name', channel.name).replace('$oldMention', mentionOld).replace('$oldTimestamp', oldChannel.createdAt).replace('$oldName', oldChannel.name).replace('$user', entry.user.username + '#' + entry.user.discriminator).replace('$userId', entry.user.id);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildBanAdd', async (guild, user) => {
+    try {
+      let a = await dbEI.getEvent(channel.guild.id, 'guildBanAdd');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = "";
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'User banned :\n';
+          hastebinMessage += JSON.stringify(user) + '\n';
+          hastebinMessage += user.username + '#' + user.discriminator + ' with id ' + user.id + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Audit Log Informations !\n\n';
+          hastebinMessage += 'Additional informations on the ban :\n';
+          hastebinMessage += 'Reason :\n\n';
+          hastebinMessage += entry.reason + '\n\n';
+          hastebinMessage += 'Responsible :\n';
+          hastebinMessage += JSON.stringify(entry.user) + '\n';
+          hastebinMessage += entry.user.username + '#' + entry.user.discriminator + ' with id ' + entry.user.id;
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$responsibleId', entry.user.id).replace('$user', user.username + '#' + user.discriminator).replace('$userId', user.id).replace('$hastebin', hb).replace('$reason', entry.reason);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
