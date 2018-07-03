@@ -15,4 +15,16 @@ exports.loadModule = function loadModule () {
       bot.createMessage(msg.channel.id, ms + ' ms');
     });
   });
+  commandH.endpoint('^debug$', async (match, message) => {
+    let debugMessage = '```\n';
+    debugMessage += 'Logori v1.0.1\n\n';
+    debugMessage += 'Shard id ' + message.channel.guild.shard.id + ' on ' + bot.shards.size + '\n';
+    debugMessage += 'Uptime : ' + bot.uptime / 1000 + ' seconds\n';
+    debugMessage += 'Memory Usage : ' + Math.floor(process.memoryUsage().rss / 1048576) + ' MiB\n';
+    debugMessage += '```';
+    bot.createMessage(message.channel.id, debugMessage);
+  });
+  commandH.endpoint('^uptime$', async (match, message) => {
+    bot.createMessage(message.channel.id, 'The bot has been running for ' + bot.uptime / 1000 + ' seconds');
+  });
 };

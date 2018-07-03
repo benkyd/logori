@@ -227,6 +227,11 @@ exports.debugServer = async function debugServer (id) {
   console.log(inflateObj(await get(id)));
 }
 
+exports.getAllServer = async function getAllServer(id) {
+  let serverEvents = await get(id);
+  return inflateObj(serverEvents);
+}
+
 exports.getEvent = async function getEvent(id, eventName) {
   let serverEvents = await get(id);
   let obj = inflateObj(serverEvents);

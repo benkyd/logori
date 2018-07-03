@@ -24,7 +24,7 @@ bot.on('ready', () => {
     logger.log('Done !');
 });
 
-bot.on("messageCreate", (msg) => {
+bot.on('messageCreate', (msg) => {
     let content = msg.content.replace(new RegExp(`^(?:<@${bot.user.id}> +|\\*)\\b`), '');
     if (content === msg.content) return;
     if (msg.author.bot) return;
