@@ -1,5 +1,6 @@
 const commandH = require('../commandHandler');
 const bot = require('../botClient').bot;
+const Eris = require('eris');
 const dbEI = require('../dbEventInterface');
 const hastebin = require('../hastebin');
 const configM = require('../configManager');
@@ -27,6 +28,17 @@ function buildDiffs(after, before) {
   return str;
 }
 
+function getPermissions(id) {
+  let perm = new Eris.Permission(id);
+  let goodOnes = [];
+  Object.keys(perm.json).forEach(key => {
+    if (perm.json[key] === true) {
+      goodOnes.push(key);
+    }
+  });
+  return goodOnes;
+}
+
 exports.loadModule = function loadModule() {
   bot.on('channelCreate', async channel => {
     if (channel.type !== 0 && channel.type !== 2) return;
@@ -38,7 +50,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'channelCreate event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -61,7 +73,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let type = "";
+        let type = '';
         if (channel.type === 0) {
           type = "text";
         }
@@ -86,7 +98,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'channelDelete event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -109,7 +121,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let type = "";
+        let type = '';
         if (channel.type === 0) {
           type = "text";
         }
@@ -132,7 +144,7 @@ exports.loadModule = function loadModule() {
     try {
       let a = await dbEI.getEvent(channel.guild.id, 'channelDelete');
       if (a.event.d === true) {
-        let type = "";
+        let type = '';
         if  (channel.type === 0) {
           type = "text";
         }
@@ -141,7 +153,7 @@ exports.loadModule = function loadModule() {
         }
         let mention = channel.mention;
         if (channel.type === 2) mention.shift();
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           hb = await hastebin(configM.config.hastebinServer, 'Channel ' + channel.name + ' data as JSON\n\n------------------\n\n' + JSON.stringify(channel));
         }
@@ -164,7 +176,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'channelUpdate event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -193,7 +205,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let type = "";
+        let type = '';
         if (channel.type === 0) {
           type = "text";
         }
@@ -215,7 +227,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildBanAdd event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -244,7 +256,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildBanRemove event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -273,7 +285,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildEmojiAdd event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -306,7 +318,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildEmojiUpdate event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -340,7 +352,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildEmojiDelete event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -385,7 +397,7 @@ exports.loadModule = function loadModule() {
     try {
       let a = await dbEI.getEvent(guild.id, 'guildMemberAdd');
       if (a.event.d === true) {
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildMemberAdd event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -412,7 +424,7 @@ exports.loadModule = function loadModule() {
     try {
       let a = await dbEI.getEvent(guild.id, 'guildMemberRemove');
       if (a.event.d === true) {
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildMemberRemove event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -439,7 +451,7 @@ exports.loadModule = function loadModule() {
       let a = await dbEI.getEvent(guild.id, 'guildMemberKick');
       if (a.event.d === true) {
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'guildMemberKick event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
@@ -484,7 +496,7 @@ exports.loadModule = function loadModule() {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
-        let hb = "";
+        let hb = '';
         let diffs = '';
         if (a.event.msg.includes("$hastebin") || a.event.msg.includes("$recapitulative")) {
           diffs = buildDiffs(entry.after, entry.before);
@@ -511,6 +523,224 @@ exports.loadModule = function loadModule() {
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
         let finalMessage = a.event.msg.replace('$memberId', member.user.id).replace('$member', member.user.username).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason).replace('$recapitulative', diffs);;
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildRoleCreate', async (guild, role) => {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildRoleCreate');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'guildRoleCreate event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(role) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Role Name : ' + role.name + '\n';
+          hastebinMessage += 'Role Id : ' + role.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Permissions :\n\n';
+          hastebinMessage += getPermissions(role.permissions.allow).join(',\n') + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Hyper cool before -> after event thing :\n';
+          hastebinMessage += buildDiffs(entry.after, entry.before) + '\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$roleId', role.id).replace('$role', role.name).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildRoleDelete', async (guild, role) => {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildRoleDelete');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'guildRoleDelete event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(role) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Old Role Name : ' + role.name + '\n';
+          hastebinMessage += 'Old Role Id : ' + role.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Permissions :\n\n';
+          hastebinMessage += getPermissions(role.permissions.allow).join(',\n') + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Hyper cool before -> after event thing :\n';
+          hastebinMessage += buildDiffs(entry.after, entry.before) + '\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$roleId', role.id).replace('$role', role.name).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildRoleUpdate', async (guild, role, oldRole) => {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildRoleUpdate');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'guildRoleUpdate event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(oldRole) + '\n\n';
+          hastebinMessage += JSON.stringify(role) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Role Id : ' + role.id + '\n\n';
+          hastebinMessage += 'Old Role Name : ' + oldRole.name + '\n\n';
+          hastebinMessage += 'Updated Role Name : ' + role.name + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Old Role Permissions :\n\n';
+          hastebinMessage += getPermissions(oldRole.permissions.allow).join(',\n') + '\n\n';
+          hastebinMessage += 'Updated Role Permissions :\n\n';
+          hastebinMessage += getPermissions(role.permissions.allow).join(',\n') + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Hyper cool before -> after event thing :\n';
+          hastebinMessage += buildDiffs(entry.after, entry.before) + '\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$roleId', role.id).replace('$role', role.name).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildUpdate', async (guild, oldGuild) => {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildUpdate');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'guildUpdate event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(oldGuild) + '\n\n';
+          hastebinMessage += JSON.stringify(guild) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Guild Id : ' + guild.id + '\n';
+          hastebinMessage += (guild.large ? 'The Guild is a large guild' : 'The Guild is not large') + '\n';
+          hastebinMessage += 'Guild Owner\'s Id : ' + guild.ownerID +  '\n';
+          hastebinMessage += 'Guild Verification Level : ' + guild.verificationLevel +  '\n';
+          hastebinMessage += 'Guild Member Count : ' + guild.memberCount +  '\n\n';
+          hastebinMessage += 'Old Guild Name : ' + oldGuild.name + '\n\n';
+          hastebinMessage += 'Updated Guild Name : ' + guild.name + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Hyper cool before -> after event thing :\n';
+          hastebinMessage += buildDiffs(entry.after, entry.before) + '\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$guildId', guild.id).replace('$guild', guild.name).replace('$oldGuild', oldGuild.name).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('messageDelete', async (message) => {
+    try {
+      let a = await dbEI.getEvent(message.channel.guild.id, 'messageDelete');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(message.channel.guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'messageDelete event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(message) + '\n\n';
+          hastebinMessage += '---\n\n';
+          if (entry.actionType === 72) {
+            hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+            hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n';
+            hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          }
+          else {
+            hastebinMessage += 'Member has deleted himself the message\n\n';
+          }
+          hastebinMessage += 'Message Author\'s Name : ' + message.author.username + '#' + message.author.discriminator + '\n';
+          hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
+          hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
+          hastebinMessage += 'Message Channel Id : ' + message.channel.id + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Content :\n\n';
+          hastebinMessage += message.content + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$messageId', message.id).replace('$channelId', message.channel.id).replace('$channel', message.channel.name).replace('$authorId', message.author.id).replace('$author', message.author.username).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('messageUpdate', async (message, oldMessage) => {
+    try {
+      let a = await dbEI.getEvent(message.channel.guild.id, 'messageUpdate');
+      if (a.event.d === true) {
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'messageUpdate event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(oldMessage) + '\n\n';
+          hastebinMessage += JSON.stringify(message) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Message Author\'s Name : ' + message.author.username + '#' + message.author.discriminator + '\n';
+          hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
+          hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
+          hastebinMessage += 'Message Channel Id : ' + message.channel.id + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Old Content :\n\n';
+          hastebinMessage += oldMessage.content + '\n\n';
+          hastebinMessage += 'Updated Content :\n\n';
+          hastebinMessage += message.content + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$messageId', message.id).replace('$channelId', message.channel.id).replace('$channel', message.channel.name).replace('$authorId', message.author.id).replace('$author', message.author.username).replace('$hastebin', hb);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
