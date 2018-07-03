@@ -4,6 +4,8 @@ const dbEI = require('../dbEventInterface');
 const hastebin = require('../hastebin');
 const configM = require('../configManager');
 
+// Redo the first events because they're probably fucked up
+
 exports.loadModule = function loadModule () {
   bot.on('channelCreate', async channel => {
     if (channel.type !== 0 && channel.type !== 2) return;
@@ -122,6 +124,8 @@ exports.loadModule = function loadModule () {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(channel.guild.id, 1);
         let entry = auditlog.entries[0];
+        console.log(entry.before);
+        console.log(entry.after);
         console.log(entry);
         let hb = "";
         if (a.event.msg.includes("$hastebin")) {
@@ -358,6 +362,7 @@ exports.loadModule = function loadModule () {
       console.log(e);
     }
   });
+  let lastAuditLogId = '';
   // Maybe make a second thing like guildMemberLeft
   async function guildMemberRemove(guild, member) {
     try {
@@ -367,8 +372,8 @@ exports.loadModule = function loadModule () {
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'Gateway info :\n';
           hastebinMessage += 'Member info :\n\n';
-          hastebinMessage += JSON.stringify(member);
-          hastebinMessage += member.user.username + '#' + member.user.discriminator + ' with id ' + member.user.id;
+          hastebinMessage += JSON.stringify(member) + '\n';
+          hastebinMessage += member.user.username + '#' + member.user.discriminator + ' with id ' + member.user.id + '\n\n';
           hastebinMessage += '---\n\n';
           hastebinMessage += 'No Audit Log time this time lol !';
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
@@ -388,12 +393,13 @@ exports.loadModule = function loadModule () {
       if (a.event.d === true) {
         let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
+        lastAuditLogId = entry.id;
         let hb = "";
         if (a.event.msg.includes("$hastebin")) {
           let hastebinMessage = 'Gateway info :\n';
           hastebinMessage += 'Member info :\n\n';
-          hastebinMessage += JSON.stringify(member);
-          hastebinMessage += member.user.username + '#' + member.user.discriminator + ' with id ' + member.user.id;
+          hastebinMessage += JSON.stringify(member) + '\n';
+          hastebinMessage += member.user.username + '#' + member.user.discriminator + ' with id ' + member.user.id + '\n\n';
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Audit Log Can you see ?\n';
           hastebinMessage += 'Additional information on the kick\n\n';
@@ -417,7 +423,7 @@ exports.loadModule = function loadModule () {
       let date = new Date();
       let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
       let entry = auditlog.entries[0];
-      if (entry.actionType === 20) {
+      if (entry.actionType === 20 && entry.id !== lastAuditLogId) {
         return guildMemberKick(guild, member);
       }
       else if (entry.actionType !== 22) {
