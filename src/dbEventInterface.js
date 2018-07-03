@@ -88,7 +88,22 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
+      shameBan: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      pollrLikeBan: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
       guildBanAdd: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      pollrLikeUnban: {
         d: true,
         msg: '',
         c: 'f',
@@ -113,12 +128,32 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
+      memberJoin: {
+        d: false,
+        msg: '',
+        c: 'f',
+      },
       guildMemberAdd: {
         d: true,
         msg: '',
         c: 'f',
       },
+      memberLeft: {
+        d: false,
+        msg: '',
+        c: 'f',
+      },
       guildMemberRemove: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      shameKick: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      pollrLikeKick: {
         d: true,
         msg: '',
         c: 'f',
@@ -169,11 +204,6 @@ exports.initServer = function initServer(id, cId) {
         c: 'f',
       },
       messageUpdate: {
-        d: true,
-        msg: '',
-        c: 'f',
-      },
-      presenceUpdate: {
         d: true,
         msg: '',
         c: 'f',

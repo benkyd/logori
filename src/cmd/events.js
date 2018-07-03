@@ -220,16 +220,14 @@ exports.loadModule = function loadModule() {
       console.log(e);
     }
   });
-  // Do another option to have a Pollr type of thing for ban, unban and kick
-  bot.on('guildBanAdd', async (guild, user) => {
+  async function shameBan(guild, user, auditlog) {
     try {
-      let a = await dbEI.getEvent(guild.id, 'guildBanAdd');
+      let a = await dbEI.getEvent(guild.id, 'shameBan');
       if (a.event.d === true) {
-        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
         let hb = '';
         if (a.event.msg.includes("$hastebin")) {
-          let hastebinMessage = 'guildBanAdd event triggered :\n\n';
+          let hastebinMessage = 'shameBan event triggered :\n\n';
           hastebinMessage += 'Raw event info :\n\n';
           hastebinMessage += JSON.stringify(user) + '\n\n';
           hastebinMessage += '---\n\n';
@@ -249,12 +247,99 @@ exports.loadModule = function loadModule() {
     catch (e) {
       console.log(e);
     }
+  }
+  async function pollrLikeBan(guild, user, auditlog) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'pollrLikeBan');
+      if (a.event.d === true) {
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'pollrLikeBan event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(user) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Banned User\'s Name : ' + user.username + '#' + user.discriminator + '\n';
+          hastebinMessage += 'Banned User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$bannedId', user.id).replace('$banned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+  bot.on('guildBanAdd', async (guild, user) => {
+    try {
+      let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+      let a = await dbEI.getEvent(guild.id, 'guildBanAdd');
+      if (a.event.d === true) {
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'guildBanAdd event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(user) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Banned User\'s Name : ' + user.username + '#' + user.discriminator + '\n';
+          hastebinMessage += 'Banned User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$bannedId', user.id).replace('$banned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+      shameBan(guild, user, auditlog);
+      pollrLikeBan(guild, user, auditlog);
+    }
+    catch (e) {
+      console.log(e);
+    }
   });
+  async function pollrLikeUnban(guild, user, auditlog) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'pollrLikeUnban');
+      if (a.event.d === true) {
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'pollrLikeUnban event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(user) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Unbanned User\'s Name : ' + user.username + '#' + user.discriminator + '\n';
+          hastebinMessage += 'Unbanned User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$unbannedId', user.id).replace('$unbanned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
   bot.on('guildBanRemove', async (guild, user) => {
     try {
+      let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
       let a = await dbEI.getEvent(guild.id, 'guildBanRemove');
       if (a.event.d === true) {
-        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
         let entry = auditlog.entries[0];
         let hb = '';
         if (a.event.msg.includes("$hastebin")) {
@@ -274,6 +359,7 @@ exports.loadModule = function loadModule() {
         let finalMessage = a.event.msg.replace('$unbannedId', user.id).replace('$unbanned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
+      pollrLikeUnban(guild, user, auditlog);
     }
     catch (e) {
       console.log(e);
@@ -392,7 +478,31 @@ exports.loadModule = function loadModule() {
       return guildEmojiDelete(guild, emojis, oldEmojis);
     }
   });
-  // Add a second identical event for welcome message like memberJoined
+  async function memberJoin(guild, member) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'memberJoin');
+      if (a.event.d === true) {
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'memberJoin event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(member) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'New Member\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
+          hastebinMessage += 'New Member\'s Id : ' + member.user.id + '\n';
+          hastebinMessage += (member.user.bot ? 'New member is a bot' : 'New member is not a bot') + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$memberId', member.user.id).replace('$member', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
   bot.on('guildMemberAdd', async (guild, member) => {
     try {
       let a = await dbEI.getEvent(guild.id, 'guildMemberAdd');
@@ -413,6 +523,7 @@ exports.loadModule = function loadModule() {
         let finalMessage = a.event.msg.replace('$memberId', member.user.id).replace('$member', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
+      memberJoin(guild, member);
     }
     catch (e) {
       console.log(e);
@@ -420,6 +531,31 @@ exports.loadModule = function loadModule() {
   });
   let lastKickAuditLogId = {};
   // Maybe make a second thing like guildMemberLeft
+  async function memberLeft(guild, member) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'memberLeft');
+      if (a.event.d === true) {
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'memberLeft event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(member) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Member\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
+          hastebinMessage += 'Member\'s Id : ' + member.user.id + '\n';
+          hastebinMessage += (member.user.bot ? 'Member was a bot' : 'Member was not a bot') + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$memberId', member.user.id).replace('$member', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
   async function guildMemberRemove(guild, member) {
     try {
       let a = await dbEI.getEvent(guild.id, 'guildMemberRemove');
@@ -440,12 +576,68 @@ exports.loadModule = function loadModule() {
         let finalMessage = a.event.msg.replace('$memberId', member.user.id).replace('$member', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
+      memberLeft(guild, member);
     }
     catch (e) {
       console.log(e);
     }
   }
-  // Make a second thing like that for Pollr like mod-log
+  async function shameKick(guild, member, auditlog) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'shameKick');
+      if (a.event.d === true) {
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'shameKick event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(member) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Kicked User\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
+          hastebinMessage += 'Kicked User\'s Id : ' + member.user.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+  async function pollrLikeKick(guild, member, auditlog) {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'pollrLikeKick');
+      if (a.event.d === true) {
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'pollrLikeKick event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(member) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Kicked User\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
+          hastebinMessage += 'Kicked User\'s Id : ' + member.user.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
   async function guildMemberKick(guild, member, auditlog) {
     try {
       let a = await dbEI.getEvent(guild.id, 'guildMemberKick');
@@ -469,6 +661,8 @@ exports.loadModule = function loadModule() {
         let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
+      shameKick(guild, member, auditlog);
+      pollrLikeKick(guild, member, auditlog);
     }
     catch (e) {
       console.log(e);
@@ -479,7 +673,8 @@ exports.loadModule = function loadModule() {
       let date = new Date();
       let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
       let entry = auditlog.entries[0];
-      if (entry.actionType === 20 && entry.id !== lastAuditLogId[guild.id]) {
+      if (entry.actionType === 20 && entry.id !== lastKickAuditLogId[guild.id]) {
+        lastKickAuditLogId[guild.id] = entry.id;
         return guildMemberKick(guild, member, auditlog);
       }
       else if (entry.actionType !== 22) {
@@ -697,6 +892,7 @@ exports.loadModule = function loadModule() {
           else {
             hastebinMessage += 'Member has deleted himself the message\n\n';
           }
+          console.log(message);
           hastebinMessage += 'Message Author\'s Name : ' + message.author.username + '#' + message.author.discriminator + '\n';
           hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
           hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
