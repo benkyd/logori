@@ -69,22 +69,22 @@ exports.initServer = function initServer(id, cId) {
     fallbackChannelId: cId,
     eventsInfo: {
       channelCreate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       channelDelete: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       channelPinUpdate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       channelUpdate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
@@ -99,7 +99,7 @@ exports.initServer = function initServer(id, cId) {
         c: 'f',
       },
       guildBanAdd: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
@@ -109,22 +109,22 @@ exports.initServer = function initServer(id, cId) {
         c: 'f',
       },
       guildBanRemove: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildEmojiAdd: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildEmojiUpdate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildEmojiDelete: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
@@ -159,32 +159,32 @@ exports.initServer = function initServer(id, cId) {
         c: 'f',
       },
       guildMemberKick: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildMemberUpdate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildRoleCreate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildRoleDelete: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildRoleUpdate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       guildUpdate: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
@@ -194,12 +194,12 @@ exports.initServer = function initServer(id, cId) {
         c: 'f',
       },
       messageReactionAdd: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
       messageReactionRemove: {
-        d: true,
+        d: false,
         msg: '',
         c: 'f',
       },
