@@ -118,7 +118,22 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
+      messageReactionAdd: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      messageReactionRemove: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
       messageUpdate: {
+        d: true,
+        msg: '',
+        c: 'f',
+      },
+      presenceUpdate: {
         d: true,
         msg: '',
         c: 'f',
