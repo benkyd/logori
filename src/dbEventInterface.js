@@ -68,26 +68,6 @@ exports.initServer = function initServer(id, cId) {
   let obj = {
     fallbackChannelId: cId,
     eventsInfo: {
-      channelCreate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      channelDelete: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      channelPinUpdate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      channelUpdate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
       shameBan: {
         d: true,
         msg: '',
@@ -98,33 +78,8 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
-      guildBanAdd: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
       pollrLikeUnban: {
         d: true,
-        msg: '',
-        c: 'f',
-      },
-      guildBanRemove: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildEmojiAdd: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildEmojiUpdate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildEmojiDelete: {
-        d: false,
         msg: '',
         c: 'f',
       },
@@ -158,48 +113,8 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
-      guildMemberKick: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildMemberUpdate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildRoleCreate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildRoleDelete: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildRoleUpdate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      guildUpdate: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
       messageDelete: {
         d: true,
-        msg: '',
-        c: 'f',
-      },
-      messageReactionAdd: {
-        d: false,
-        msg: '',
-        c: 'f',
-      },
-      messageReactionRemove: {
-        d: false,
         msg: '',
         c: 'f',
       },
