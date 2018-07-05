@@ -133,11 +133,6 @@ exports.initServer = function initServer(id, cId) {
         msg: '',
         c: 'f',
       },
-      presenceUpdate: {
-        d: true,
-        msg: '',
-        c: 'f',
-      },
     },
   };
   return put(id, deflateObj(obj));

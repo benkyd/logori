@@ -369,6 +369,70 @@ exports.loadModule = function loadModule() {
       console.log(e);
     }
   });
+  bot.on('messageReactionAdd', async (message, emoji) => {
+    try {
+      let a = await dbEI.getEvent(message.channel.guild.id, 'messageReactionAdd');
+      if (a.event.d === true) {
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'messageReactionAdd event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(message) + '\n\n';
+          hastebinMessage += JSON.stringify(emoji) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Message Author\'s Name : ' + message.author.username + '#' + message.author.discriminator + '\n';
+          hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
+          hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
+          hastebinMessage += 'Message Channel Id : ' + message.channel.id + '\n\n';
+          hastebinMessage += 'Emoji Name : ' + emoji.name + '\n';
+          hastebinMessage += 'Emoji Id : ' + emoji.id + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Content :\n\n';
+          hastebinMessage += message.content + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$messageId', message.id).replace('$channelId', message.channel.id).replace('$channel', message.channel.name).replace('$emojiId', emoji.id).replace('$emoji', emoji.name).replace('$authorId', message.author.id).replace('$author', message.author.username).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('messageReactionRemove', async (message, emoji) => {
+    try {
+      let a = await dbEI.getEvent(message.channel.guild.id, 'messageReactionRemove');
+      if (a.event.d === true) {
+        let hb = '';
+        if (a.event.msg.includes("$hastebin")) {
+          let hastebinMessage = 'messageReactionRemove event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(message) + '\n\n';
+          hastebinMessage += JSON.stringify(emoji) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Message Author\'s Name : ' + message.author.username + '#' + message.author.discriminator + '\n';
+          hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
+          hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
+          hastebinMessage += 'Message Channel Id : ' + message.channel.id + '\n\n';
+          hastebinMessage += 'Old Emoji Name : ' + emoji.name + '\n';
+          hastebinMessage += 'Old Emoji Id : ' + emoji.id + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Content :\n\n';
+          hastebinMessage += message.content + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace('$messageId', message.id).replace('$channelId', message.channel.id).replace('$channel', message.channel.name).replace('$emojiId', emoji.id).replace('$emoji', emoji.name).replace('$authorId', message.author.id).replace('$author', message.author.username).replace('$hastebin', hb);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
   bot.on('messageUpdate', async (message, oldMessage) => {
     try {
       let a = await dbEI.getEvent(message.channel.guild.id, 'messageUpdate');
