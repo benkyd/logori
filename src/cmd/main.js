@@ -82,7 +82,7 @@ exports.loadModule = function loadModule() {
       bot.createMessage(message.channel.id, 'That channel is not in this guild. Don\'t try to prank me.');
     }
   });
-  commandH.endpoint('^event (.+) msg (.+)$', async (match, message) => {
+  commandH.endpoint('^event (.+) msg ([\\s\\S]+)$', async (match, message) => {
     if (!message.member.permission.has('manageGuild') && message.author.id !== configM.config.owner) return;
     dbEI.setEventMsg(message.channel.guild.id, match[1], match[2]);
     bot.createMessage(message.channel.id, 'Event message set');

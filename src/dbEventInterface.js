@@ -66,77 +66,84 @@ function inflateObj(str) {
 
 exports.initServer = function initServer(id, cId) {
   let obj = {
+    modCase: 1,
     fallbackChannelId: cId,
     eventsInfo: {
       shameBan: {
         d: true,
-        msg: '',
+        msg: '***$banned got banned, lol***',
         c: 'f',
       },
       pollrLikeBan: {
         d: true,
-        msg: '',
+        msg: '**Ban**, Case $case\n**User**: $banned ($bannedId)\n**Reason**: $reason\n**Responsible moderator**: $responsible\n**Log**: $hastebin',
         c: 'f',
       },
       pollrLikeUnban: {
         d: true,
-        msg: '',
+        msg: '**Unban**, Case $case\n**User**: $unbanned ($unbannedId)\n**Reason**: $reason\n**Responsible moderator**: $responsible\n**Log**: $hastebin',
         c: 'f',
       },
       memberJoin: {
         d: false,
-        msg: '',
+        msg: '$member just joined the server',
         c: 'f',
       },
       guildMemberAdd: {
         d: true,
-        msg: '',
+        msg: '$member joined the server, $hastebin',
         c: 'f',
       },
       memberLeft: {
         d: false,
-        msg: '',
+        msg: '$member just left the server',
         c: 'f',
       },
       guildMemberRemove: {
         d: true,
-        msg: '',
+        msg: '$member left the server, $hastebin',
         c: 'f',
       },
       shameKick: {
         d: true,
-        msg: '',
+        msg: '***$kicked got kicked, lmao***',
         c: 'f',
       },
       pollrLikeKick: {
         d: true,
-        msg: '',
+        msg: '**Kick**, Case $case\n**User**: $kicked ($kickedId)\n**Reason**: $reason\n**Responsible moderator**: $responsible\n**Log**: $hastebin',
         c: 'f',
       },
       messageDelete: {
         d: true,
-        msg: '',
+        msg: 'A message from $author in channel <#$channelId> has been deleted, $hastebin',
         c: 'f',
       },
       messageReactionAdd: {
         d: true,
-        msg: '',
+        msg: 'A reaction with emoji :$emoji: has been added to a message from $author in <#$channelId>',
         c: 'f',
       },
       messageReactionRemove: {
         d: true,
-        msg: '',
+        msg: 'A reaction with emoji :$emoji: has been removed from a message from $author in <#$channelId>',
         c: 'f',
       },
       messageUpdate: {
         d: true,
-        msg: '',
+        msg: 'A message from $author in <#$channelId> has been edited, $hastebin',
         c: 'f',
       },
     },
   };
   return put(id, deflateObj(obj));
 };
+
+exports.incrementModCase = async function incrementModCase (id) {
+  let obj = inflateObj(await get(id));
+  obj.modCase += 1;
+  return put(id, deflateObj(obj));
+}
 
 exports.isAlreadyInitted = async function isAlreadyInitted (id) {
   try {
@@ -161,6 +168,7 @@ exports.getEvent = async function getEvent(id, eventName) {
   let serverEvents = await get(id);
   let obj = inflateObj(serverEvents);
   return {
+    modCase: obj.modCase,
     fallbackChannelId: obj.fallbackChannelId,
     event: obj.eventsInfo[eventName],
   };

@@ -36,8 +36,8 @@ bot.on('messageCreate', (msg) => {
 
 bot.connect();
 
-process.on('SIGINT', function() {
-  bot.disconnect();
+process.on('SIGINT', async function() {
+  await bot.disconnect();
   logger.log('Disconnected');
   process.exit();
 });

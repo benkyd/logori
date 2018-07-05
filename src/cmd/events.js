@@ -53,6 +53,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
           hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Case : ' + a.modCase + '\n\n';
           hastebinMessage += 'Banned User\'s Name : ' + user.username + '#' + user.discriminator + '\n';
           hastebinMessage += 'Banned User\'s Id : ' + entry.user.id + '\n\n';
           hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
@@ -60,7 +61,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace('$bannedId', user.id).replace('$banned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        let finalMessage = a.event.msg.replace('$bannedId', user.id).replace('$banned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason).replace('$case', a.modCase);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
@@ -81,6 +82,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
           hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Case : ' + a.modCase + '\n\n';
           hastebinMessage += 'Banned User\'s Name : ' + user.username + '#' + user.discriminator + '\n';
           hastebinMessage += 'Banned User\'s Id : ' + entry.user.id + '\n\n';
           hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
@@ -88,8 +90,9 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace('$bannedId', user.id).replace('$banned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        let finalMessage = a.event.msg.replace('$bannedId', user.id).replace('$banned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason).replace('$case', a.modCase);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+        dbEI.incrementModCase(guild.id);
       }
     }
     catch (e) {
@@ -119,6 +122,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
           hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Case : ' + a.modCase + '\n\n';
           hastebinMessage += 'Unbanned User\'s Name : ' + user.username + '#' + user.discriminator + '\n';
           hastebinMessage += 'Unbanned User\'s Id : ' + entry.user.id + '\n\n';
           hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
@@ -126,8 +130,9 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace('$unbannedId', user.id).replace('$unbanned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        let finalMessage = a.event.msg.replace('$unbannedId', user.id).replace('$unbanned', user.username + '#' + user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason).replace('$case', a.modCase);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+        dbEI.incrementModCase(guild.id);
       }
     }
     catch (e) {
@@ -260,6 +265,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
           hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Case : ' + a.modCase + '\n\n';
           hastebinMessage += 'Kicked User\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
           hastebinMessage += 'Kicked User\'s Id : ' + member.user.id + '\n\n';
           hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
@@ -267,7 +273,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason).replace('$case', a.modCase);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
@@ -288,6 +294,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
           hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Case : ' + a.modCase + '\n\n';
           hastebinMessage += 'Kicked User\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
           hastebinMessage += 'Kicked User\'s Id : ' + member.user.id + '\n\n';
           hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
@@ -295,8 +302,9 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason);
+        let finalMessage = a.event.msg.replace('$kickedId', member.user.id).replace('$kicked', member.user.username + '#' + member.user.discriminator).replace('$hastebin', hb).replace('$responsibleId', entry.user.id).replace('$responsible', entry.user.username + '#' + entry.user.discriminator).replace('$reason', entry.reason).replace('$case', a.modCase);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+        dbEI.incrementModCase(guild.id);
       }
     }
     catch (e) {
