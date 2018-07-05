@@ -32,7 +32,7 @@ exports.loadModule = function loadModule() {
     if (!message.member.permission.has('manageGuild') && message.author.id !== configM.config.owner) return;
     try {
       await dbEI.initServer(message.channel.guild.id, message.channel.id);
-      bot.createMessage(message.channel.id, 'Server **successfully** initted ! The fallback event channel has been set to this channel, you can modify it with the command `set-fallback-channel` in the target channel. See `help` command to get some help with the commands');
+      bot.createMessage(message.channel.id, 'Server **successfully** initted ! The fallback event channel has been set to this channel, you can modify it with the command `set-fallback-channel` in the target channel. See <https://github.com/ahoZiorce/logori/blob/master/BOTLIST.md> to get some help with the commands');
     }
     catch (e) {
       console.log(e);
@@ -40,12 +40,10 @@ exports.loadModule = function loadModule() {
     }
   });
   commandH.endpoint('^softban <@(.+)>$', async (match, message) => {
-    console.log(message);
     if (!message.member.permission.has('kickMembers') && message.author.id !== configM.config.owner) return;
     let m = findMember(message.channel.guild, bot.user.id);
 
     if (!message.member.permission.has('banMembers')) return;
-    console.log('hey');
     try {
       await bot.banGuildMember(message.channel.guild.id, match[1]);
       bot.unbanGuildMember(message.channel.guild.id, match[1]);
