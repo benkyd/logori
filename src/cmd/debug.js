@@ -1,5 +1,6 @@
 const commandH = require('../commandHandler');
 const bot = require('../botClient').bot;
+const uptimeM = require('../uptimeManager');
 
 exports.loadModule = function loadModule () {
   commandH.endpoint('^ping$', (match, message) => {
@@ -17,10 +18,21 @@ exports.loadModule = function loadModule () {
   });
   commandH.endpoint('^debug$', async (match, message) => {
     let debugMessage = '```\n';
-    debugMessage += 'Logori v2.2.3\n\n';
+    debugMessage += 'Logori v2.2.4\n\n';
     debugMessage += 'Shard id ' + message.channel.guild.shard.id + ' on ' + bot.shards.size + '\n';
     debugMessage += 'Uptime : ' + bot.uptime / 1000 + ' seconds\n';
     debugMessage += 'Memory Usage : ' + Math.floor(process.memoryUsage().rss / 1048576) + ' MiB\n';
+    if (uptimeM.uptimeInfo.runningTime) {
+      let t = new Date();
+      let totalTime = t.getTime() - uptimeM.uptimeInfo.firstLaunch;
+      let sessionDuration = t.getTime() - uptimeM.startTime.getTime();
+      let pourcentage = (uptimeM.uptimeInfo.runningTime + sessionDuration) / totalTime * 100;
+      let roundPourcentage = Math.round(pourcentage * 100) / 100;
+      debugMessage += 'Uptime Pourcentage : ' + roundPourcentage + '%\n';
+    }
+    else {
+      debugMessage += 'Uptime Pourcentage : 100%\n';
+    }
     debugMessage += '```';
     bot.createMessage(message.channel.id, debugMessage);
   });

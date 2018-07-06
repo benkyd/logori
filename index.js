@@ -1,6 +1,9 @@
 const configM = require('./src/configManager');
 const logger = require('./src/logger');
 const commandH = require('./src/commandHandler');
+const uptimeM = require('./src/uptimeManager');
+
+uptimeM.loadUptime();
 
 if (!configM.loadConfig('./config.json')) {
   logger.error('No config file has been found in the directory, please configure the template that has been created.');
@@ -37,6 +40,7 @@ bot.on('messageCreate', (msg) => {
 bot.connect();
 
 process.on('SIGINT', async function() {
+  uptimeM.thingsDoTo();
   await bot.disconnect();
   logger.log('Disconnected');
   process.exit();
