@@ -441,6 +441,7 @@ exports.loadModule = function loadModule() {
     }
   });
   bot.on('messageUpdate', async (message, oldMessage) => {
+    if (message.content === oldMessage.content) return;
     try {
       let a = await dbEI.getEvent(message.channel.guild.id, 'messageUpdate');
       if (a.event.d === true) {
