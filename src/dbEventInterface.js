@@ -69,6 +69,21 @@ exports.initServer = function initServer(id, cId) {
     modCase: 1,
     fallbackChannelId: cId,
     eventsInfo: {
+      channelCreate: {
+        d: true,
+        msg: 'A $type channel called <#$channelId> has been created by $responsible, $hastebin',
+        c: 'f',
+      },
+      channelDelete: {
+        d: true,
+        msg: 'A $type channel called $channel has been deleted by $responsible, $hastebin',
+        c: 'f',
+      },
+      channelUpdate: {
+        d: true,
+        msg: 'The channel $channel has been updated (from name $oldChannel), $hastebin',
+        c: 'f',
+      },
       shameBan: {
         d: true,
         msg: '***$banned got banned, lol***',
@@ -79,9 +94,19 @@ exports.initServer = function initServer(id, cId) {
         msg: '**Ban**, Case $case\n**User**: $banned ($bannedId)\n**Reason**: $reason\n**Responsible moderator**: $responsible\n**Log**: $hastebin',
         c: 'f',
       },
+      guildBanAdd: {
+        d: true,
+        msg: '$banned has been banned by $responsible, $hastebin',
+        c: 'f',
+      },
       pollrLikeUnban: {
         d: true,
         msg: '**Unban**, Case $case\n**User**: $unbanned ($unbannedId)\n**Reason**: $reason\n**Responsible moderator**: $responsible\n**Log**: $hastebin',
+        c: 'f',
+      },
+      guildBanRemove: {
+        d: true,
+        msg: '$unbanned has been unbanned by $responsible, $hatebin',
         c: 'f',
       },
       memberJoin: {
