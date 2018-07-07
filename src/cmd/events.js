@@ -623,7 +623,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace(/\$messageId/g, message.id).replace(/\$channelId/g, message.channel.id).replace(/\$channel/g, message.channel.name).replace(/\$authorId/g, message.author.id).replace(/\$author/g, message.author.username).replace(/\$hastebin/g, hb);
+        let finalMessage = a.event.msg.replace(/\$messageId/g, message.id).replace(/\$channelId/g, message.channel.id).replace(/\$channel/g, message.channel.name).replace(/\$authorId/g, message.author.id).replace(/\$author/g, message.author.username + '#' + message.author.discriminator).replace(/\$hastebin/g, hb);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
@@ -720,7 +720,7 @@ exports.loadModule = function loadModule() {
           hastebinMessage += new Date().toISOString();
           hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
         }
-        let finalMessage = a.event.msg.replace(/\$messageId/g, message.id).replace(/\$channelId/g, message.channel.id).replace(/\$channel/g, message.channel.name).replace(/\$authorId/g, message.author.id).replace(/\$author/g, message.author.username).replace(/\$hastebin/g, hb);
+        let finalMessage = a.event.msg.replace(/\$messageId/g, message.id).replace(/\$channelId/g, message.channel.id).replace(/\$channel/g, message.channel.name).replace(/\$authorId/g, message.author.id).replace(/\$author/g, message.author.username + '#' + message.author.discriminator).replace(/\$hastebin/g, hb);
         bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
