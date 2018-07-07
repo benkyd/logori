@@ -63,6 +63,77 @@ But for example, if you need to display the name of a banned user when someone i
 
 ## Description of the events
 
+### channelCreate
+
+This event is triggered when a channel is created in the server.  
+
+#### Labels
+
+`$type` : The type of the created channel, either `voice` or `text`  
+`$channelId` : The id of the created channel (you can mention the channel with this, with `<#$channelId>`)
+`$channel` : The name of the channel created  
+`$responsibleId` : The id of the member that created the channel.  
+`$responsible` : The username then `#` then discriminator of the member that created the channel.  
+`$reason` : The reason of the creation of the channel. If not, this is `null`.  
+`$hastebin` : A more advanced log of what happened, a hastebin link.  
+
+### channelDelete
+
+This event is triggered when a channel is deleted in the server.  
+
+#### Labels
+
+`$type` : The type of the deleted channel, either `voice` or `text`  
+`$channelId` : The id of the deleted channel.  
+`$channel` : The name of the deleted channel.  
+`$responsibleId` : The id of the member that deleted the channel.  
+`$responsible` : The username then `#` then discriminator of the member that deleted the channel.  
+`$reason` : The reason of the deletion of the channel. If not, this is `null`.  
+`$hastebin` : A more advanced log of what happened, a hastebin link.  
+
+### channelUpdate
+
+This event is triggered when information about a channel have been updated.  
+
+#### Labels
+
+`$type` : The type of the updated channel, either `voice` or `text`  
+`$oldChannel` : The old name of the channel.  
+`$channelId` : The id of the updated channel.  
+`$channel` : The new name of the channel.  
+`$responsibleId` : The id of the member that updated the channel.  
+`$responsible` : The username then `#` then discriminator of the member that updated the channel.  
+`$reason` : The reason for the update of the channel. If not, this is `null`.  
+`$hastebin` : A more advanced log of what happened, a hastebin link.  
+
 ### shameBan
 
-This event is intended to be used. TO BE CONTINUED
+This event is intended to be used as a "shame" message in the main channel of your server when a user is banned.  
+It's triggered when a user is banned.  
+
+#### Labels
+
+`$bannedId` : The id of the banned user.   
+`$banned` : The username then `#` then discriminator of the banned user.  
+`$channelId` : The id of the updated channel.   
+`$responsibleId` : The id of the member that banned the user.  
+`$responsible` : The username then `#` then discriminator of the member that banned the user.  
+`$reason` : The reason why the user has been banned. If not, this is `null`.  
+`$case` : The "case" number of the "moderation action", starts at 1. For example, at the tenth ban (or kick or unban), this will be replaced by `10`.  
+`$hastebin` : A more advanced log of what happened, a hastebin link.  
+
+### pollrLikeBan
+
+I don't know if you know the awesome Pollr bot. This event is intended, like Pollr, to display to everyone a public mod-log of what happened. This is, of course, just the intended use and you can use it how you want.  
+This event is triggered when a user is banned.  
+
+#### Labels
+
+`$bannedId` : The id of the banned user.   
+`$banned` : The username then `#` then discriminator of the banned user.  
+`$channelId` : The id of the updated channel.   
+`$responsibleId` : The id of the member that banned the user.  
+`$responsible` : The username then `#` then discriminator of the member that banned the user.  
+`$reason` : The reason why the user has been banned. If not, this is `null`.  
+`$case` : The "case" number of the "moderation action", starts at 1. For example, at the tenth ban (or kick or unban), this will be replaced by `10`.  
+`$hastebin` : A more advanced log of what happened, a hastebin link.  
