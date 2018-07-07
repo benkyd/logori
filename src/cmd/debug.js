@@ -28,10 +28,10 @@ exports.loadModule = function loadModule () {
       let sessionDuration = t.getTime() - uptimeM.startTime.getTime();
       let pourcentage = (uptimeM.uptimeInfo.runningTime + sessionDuration) / totalTime * 100;
       let roundPourcentage = Math.round(pourcentage * 100) / 100;
-      debugMessage += 'Uptime Pourcentage : ' + roundPourcentage + '%\n';
+      debugMessage += 'Uptime Percentage : ' + roundPourcentage + '%\n';
     }
     else {
-      debugMessage += 'Uptime Pourcentage : 100%\n';
+      debugMessage += 'Uptime Percentage : 100%\n';
     }
     debugMessage += '```';
     bot.createMessage(message.channel.id, debugMessage);
