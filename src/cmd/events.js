@@ -507,6 +507,27 @@ exports.loadModule = function loadModule() {
   }
   async function guildMemberKick(guild, member, auditlog) {
     try {
+      let a = await dbEI.getEvent(guild.id, 'guildMemberKick');
+      if (a.event.d === true) {
+        let entry = auditlog.entries[0];
+        let hb = '';
+        if (a.event.msg.includes('$hastebin')) {
+          let hastebinMessage = 'guildMemberKick event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(member) + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+          hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          hastebinMessage += 'Kicked User\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
+          hastebinMessage += 'Kicked User\'s Id : ' + member.user.id + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace(/\$kickedId/g, member.user.id).replace(/\$kicked/g, member.user.username + '#' + member.user.discriminator).replace(/\$hastebin/g, hb).replace(/\$responsibleId/g, entry.user.id).replace(/\$responsible/g, entry.user.username + '#' + entry.user.discriminator).replace(/\$reason/g, entry.reason).replace(/\$case/g, a.modCase);
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
+      }
       shameKick(guild, member, auditlog);
       pollrLikeKick(guild, member, auditlog);
     }
@@ -525,6 +546,46 @@ exports.loadModule = function loadModule() {
       }
       else if (entry.actionType !== 22) {
         return guildMemberRemove(guild, member);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  });
+  bot.on('guildMemberUpdate', async (guild, member, oldMember) => {
+    try {
+      let a = await dbEI.getEvent(guild.id, 'guildMemberUpdate');
+      if (a.event.d === true) {
+        let auditlog = await bot.getGuildAuditLogs(guild.id, 1);
+        let entry = auditlog.entries[0];
+        let hb = '';
+        let diffs = '';
+        if (a.event.msg.includes('$hastebin') || a.event.msg.includes('$recapitulative')) {
+          diffs = buildDiffs(entry.after, entry.before);
+        }
+        if (a.event.msg.includes('$hastebin')) {
+          let hastebinMessage = 'guildMemberUpdate event triggered :\n\n';
+          hastebinMessage += 'Raw event info :\n\n';
+          hastebinMessage += JSON.stringify(oldMember) + '\n\n';
+          hastebinMessage += JSON.stringify(member) + '\n\n';
+          hastebinMessage += '---\n\n';
+          if (entry.user !== member.user) {
+            hastebinMessage += 'Responsible User\'s Name : ' + entry.user.username + '#' + entry.user.discriminator + '\n';
+            hastebinMessage += 'Responsible User\'s Id : ' + entry.user.id + '\n\n';
+          }
+          hastebinMessage += 'Member\'s Name : ' + member.user.username + '#' + member.user.discriminator + '\n';
+          hastebinMessage += 'Member\'s Id : ' + member.user.id + '\n';
+          hastebinMessage += 'Member\'s Nickname : ' + member.nick + '\n\n';
+          hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += 'Hyper cool before -> after event thing :\n';
+          hastebinMessage += diffs + '\n';
+          hastebinMessage += '---\n\n';
+          hastebinMessage += new Date().toISOString();
+          hb = await hastebin(configM.config.hastebinServer, hastebinMessage);
+        }
+        let finalMessage = a.event.msg.replace(/\$memberId/g, member.user.id).replace(/\$member/g, member.user.username).replace(/\$hastebin/g, hb).replace(/\$responsibleId/g, entry.user.id).replace(/\$responsible/g, entry.user.username + '#' + entry.user.discriminator).replace(/\$reason/g, entry.reason).replace(/\$recapitulative/g, diffs);;
+        bot.createMessage(a.event.c === 'f' ? a.fallbackChannelId : a.event.c, finalMessage);
       }
     }
     catch (e) {

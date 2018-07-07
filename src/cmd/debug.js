@@ -18,7 +18,7 @@ exports.loadModule = function loadModule () {
   });
   commandH.endpoint('^debug$', async (match, message) => {
     let debugMessage = '```\n';
-    debugMessage += 'Logori v2.3.0\n\n';
+    debugMessage += 'Logori v2.3.1\n\n';
     debugMessage += 'Shard id ' + message.channel.guild.shard.id + ' on ' + bot.shards.size + '\n';
     debugMessage += 'Uptime : ' + bot.uptime / 1000 + ' seconds\n';
     debugMessage += 'Memory Usage : ' + Math.floor(process.memoryUsage().rss / 1048576) + ' MiB\n';

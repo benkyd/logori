@@ -106,7 +106,7 @@ exports.initServer = function initServer(id, cId) {
       },
       guildBanRemove: {
         d: true,
-        msg: '$unbanned has been unbanned by $responsible, $hatebin',
+        msg: '$unbanned has been unbanned by $responsible, $hastebin',
         c: 'f',
       },
       memberJoin: {
@@ -137,6 +137,16 @@ exports.initServer = function initServer(id, cId) {
       pollrLikeKick: {
         d: true,
         msg: '**Kick**, Case $case\n**User**: $kicked ($kickedId)\n**Reason**: $reason\n**Responsible moderator**: $responsible\n**Log**: $hastebin',
+        c: 'f',
+      },
+      guildMemberKick: {
+        d: true,
+        msg: '$kicked has been kicked by $responsible, $hastebin',
+        c: 'f',
+      },
+      guildMemberUpdate: {
+        d: true,
+        msg: '$member has been updated by $responsible, $hastebin ```\n$recapitulative```',
         c: 'f',
       },
       messageDelete: {
