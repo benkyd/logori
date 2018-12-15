@@ -156,12 +156,12 @@ exports.initServer = function initServer(id, cId) {
       },
       messageReactionAdd: {
         d: true,
-        msg: 'A reaction with emoji :$emoji: has been added to a message from $author in <#$channelId>',
+        msg: 'A reaction with the emote :$emoji: has been added to a message from $author in <#$channelId>',
         c: 'f',
       },
       messageReactionRemove: {
         d: true,
-        msg: 'A reaction with emoji :$emoji: has been removed from a message from $author in <#$channelId>',
+        msg: 'A reaction with the emote :$emoji: has been removed from a message from $author in <#$channelId>',
         c: 'f',
       },
       messageUpdate: {

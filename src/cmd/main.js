@@ -32,11 +32,11 @@ exports.loadModule = function loadModule() {
     if (!message.member.permission.has('manageGuild') && message.author.id !== configM.config.owner) return;
     try {
       await dbEI.initServer(message.channel.guild.id, message.channel.id);
-      bot.createMessage(message.channel.id, 'Server **successfully** initted ! The fallback event channel has been set to this channel, you can modify it with the command `set-fallback-channel` in the target channel. See <https://github.com/ahoZiorce/logori/blob/master/BOTLIST.md> to get some help with the commands');
+      bot.createMessage(message.channel.id, 'Server **successfully** initialized ! The fallback event channel has been set to this channel, you can modify it with the command `set-fallback-channel` in the target channel. See <https://github.com/ahoZiorce/logori/blob/master/BOTLIST.md> to get some help with the commands');
     }
     catch (e) {
       console.log(e);
-      bot.createMessage(message.channel.id, 'An error happened');
+      bot.createMessage(message.channel.id, 'An error occured');
     }
   });
   commandH.endpoint('^softban <@(.+)>$', async (match, message) => {
@@ -50,7 +50,7 @@ exports.loadModule = function loadModule() {
     }
     catch (e) {
       console.log(e);
-      bot.createMessage(message.channel.id, 'An error happened');
+      bot.createMessage(message.channel.id, 'An error occured');
     }
   });
   commandH.endpoint('^state(?: (.*))?$', async (match, message) => {
@@ -73,8 +73,8 @@ exports.loadModule = function loadModule() {
     // TODO: Check if the set channel is in this guild
     if (legitChannel(message, channelId)) {
       dbEI.setFallbackChannel(message.channel.guild.id, channelId);
-      bot.createMessage(message.channel.id, `Fallback **set** to the channel <#${channelId}>, all the event logging will be done there by default. A message will be sent in that channel to make sure it is correct.`);
-      bot.createMessage(channelId, `<@${message.author.id}>, this is now the fallback channel for all the events. That means if some event doesn't have some particular channel set, it will default to this channel`);
+      bot.createMessage(message.channel.id, `Fallback **set** to the channel <#${channelId}>, all the event logging is be done there by default. A message is be sent in that channel to make sure it is correct.`);
+      bot.createMessage(channelId, `<@${message.author.id}>, this is now the fallback channel for all the events. That means if some event doesn't have some channel set, it will default to this channel`);
     }
     else {
       bot.createMessage(message.channel.id, 'That channel is not in this guild. Don\'t try to prank me.');
@@ -118,7 +118,7 @@ exports.loadModule = function loadModule() {
         newState = false;
       }
       else {
-        bot.createMessage(message.channel.id, `Invalid option, the possibilities are : \`event ${match[1]} (enable|true|disable|false)\``);
+        bot.createMessage(message.channel.id, `Invalid option, try: \`event ${match[1]} (enable|true|disable|false)\``);
         return;
       }
     }

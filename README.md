@@ -12,4 +12,9 @@ The BOTLIST.md file contains plenty of documentation on how the bot works.
 
 ## License
 
-MIT
+MIT, see LICENSE
+
+# Contributors
+
+- ahoZiorce - Founder, maintainer
+- Ben (plane000)#8618 <benjaminkyd@gmail.com> - Maintainer, contributor
