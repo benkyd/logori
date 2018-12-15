@@ -2,19 +2,19 @@
 
 # General Info
 
-Logori is a logging bot intended to complete the Audit Log with some event that it doesn't log. Some audit log events are also available for the completeness of the bot (that's why the bot needs `See Audit Log` permission).  
+Logori is a logging bot designed to compliment the Audit Log with events that it does not log. Some audit log events are also available for the completeness (that's why the bot needs the `See Audit Log` permission).  
 
-The command prefix is `*` but you can as well mention the bot.
+The prefix is `*`, but a mention will also work.
 
 # Explanation
 
-First of all, execute the command `*initserv` to initialize your server and put its event configuration in the database and set the current channel as the fallback channel. **Most commands will not work** before that
+First of all, execute the command `*initserv` to initialize your server and put its event configuration in the database and set the current channel as the fallback channel. **Most commands will not work** before this command is executed.
 
->Note : The bot will not respond to the commands if you don't enter them correctly, or if you don't have the permissions to use them. This is intended to reduce possibility of spam by raiders or, eventually, by misconfigured user bots (those last are forbidden btw if you didn't know). The needed commands permissions are specified below.
+>Note : The bot will not respond to the commands if you don't enter them correctly, or if you don't have the permissions to use them. This is intended to reduce possibility of spam by raiders or, eventually, by misconfigured user bots. The needed commands permissions are specified below.
 
-With Logori there is a concept of "fallback event channel". Since you can customize in-depth the logging channel for each event, there should be a default channel for non-configured events. This channel is set to the current channel when executing `initserv` but you can modify it with the command `*set-fallback-channel` in the channel you want.
+Logori introduced the concept of "fallback event channels". Since you can do an in-depth customisation of the logging channel for each event, there should be a default channel for non-configured events to fall back too. This channel is set to the channel `initserv` is executed in, but you can modify it with the command `set-fallback-channel` in the channel you want.
 
-What the bot logs are called `events`. With Logori, you can choose which event you want to log and even customize the message and the channel where it is logged.  
+The bot logs `events`. With Logori, you can choose which event you want to log and even customize the message and the channel where it is logged.  
 
 Here is the list of currently available the events names (as of v2.2.1):
 
@@ -40,15 +40,15 @@ As said earlier, you can customize events as you want, with the command `*event`
 
 ### Enabling and disabling events
 
-Use the command `*event eventName state enabled|disabled` by replacing, of course, `eventName` with the actual event name, and **by choosing** one of `enabled` **or** `disabled` (| means or).
+Use the command `*event eventName state enabled|disabled` by replacing, `eventName` with the actual event name, and **by choosing** one of `enabled` **or** `disabled`.
 
 > Note: With the exception of events `memberJoin` and `memberLeft`, all events are **enabled** by default.
 
 ### Change per-event logging channel
 
-For that, you can use the `event` command as follows `*event eventName channel`  
+For this, you can use the `event` command as follows `*event eventName channel`  
 
-The logging channel will be set to the current channel, instructions will be given to you at that moment to explain how to revert back to the default channel.  
+The logging channel will be set to the current channel, instructions will be given to you to explain how to revert back to the default channel.  
 You can also mention a channel after that command to set the logging to that channel *remotely*.
 
 ### Change an event's message
@@ -113,9 +113,9 @@ It's triggered when a user is banned.
 
 #### Labels
 
-`$bannedId` : The id of the banned user.   
+`$bannedId` : The id of the banned user.
 `$banned` : The username then `#` then discriminator of the banned user.  
-`$channelId` : The id of the updated channel.   
+`$channelId` : The id of the updated channel.
 `$responsibleId` : The id of the member that banned the user.  
 `$responsible` : The username then `#` then discriminator of the member that banned the user.  
 `$reason` : The reason why the user has been banned. If not, this is `null`.  
@@ -129,9 +129,9 @@ This event is triggered when a user is banned.
 
 #### Labels
 
-`$bannedId` : The id of the banned user.   
+`$bannedId` : The id of the banned user.
 `$banned` : The username then `#` then discriminator of the banned user.  
-`$channelId` : The id of the updated channel.   
+`$channelId` : The id of the updated channel.
 `$responsibleId` : The id of the member that banned the user.  
 `$responsible` : The username then `#` then discriminator of the member that banned the user.  
 `$reason` : The reason why the user has been banned. If not, this is `null`.  

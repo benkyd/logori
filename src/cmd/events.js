@@ -610,7 +610,7 @@ exports.loadModule = function loadModule() {
             hastebinMessage += 'Reason : ' + entry.reason + '\n\n';
           }
           else {
-            hastebinMessage += 'Member has deleted himself the message\n\n';
+            hastebinMessage += 'Author deleted their own message\n\n';
           }
           hastebinMessage += 'Message Author\'s Name : ' + message.author.username + '#' + message.author.discriminator + '\n';
           hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
@@ -646,8 +646,8 @@ exports.loadModule = function loadModule() {
           hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
           hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
           hastebinMessage += 'Message Channel Id : ' + message.channel.id + '\n\n';
-          hastebinMessage += 'Emoji Name : ' + emoji.name + '\n';
-          hastebinMessage += 'Emoji Id : ' + emoji.id + '\n\n';
+          hastebinMessage += 'Emote Name : ' + emoji.name + '\n';
+          hastebinMessage += 'Emote Id : ' + emoji.id + '\n\n';
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Content :\n\n';
           hastebinMessage += message.content + '\n\n';
@@ -678,8 +678,8 @@ exports.loadModule = function loadModule() {
           hastebinMessage += 'Message Author\'s Id : ' + message.author.id + '\n\n';
           hastebinMessage += 'Message Channel Name : ' + message.channel.name + '\n';
           hastebinMessage += 'Message Channel Id : ' + message.channel.id + '\n\n';
-          hastebinMessage += 'Old Emoji Name : ' + emoji.name + '\n';
-          hastebinMessage += 'Old Emoji Id : ' + emoji.id + '\n\n';
+          hastebinMessage += 'Old Emote Name : ' + emoji.name + '\n';
+          hastebinMessage += 'Old Emote Id : ' + emoji.id + '\n\n';
           hastebinMessage += '---\n\n';
           hastebinMessage += 'Content :\n\n';
           hastebinMessage += message.content + '\n\n';

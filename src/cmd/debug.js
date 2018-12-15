@@ -22,17 +22,17 @@ exports.loadModule = function loadModule () {
     debugMessage += 'Shard id ' + message.channel.guild.shard.id + ' on ' + bot.shards.size + '\n';
     debugMessage += 'Uptime : ' + bot.uptime / 1000 + ' seconds\n';
     debugMessage += 'Memory Usage : ' + Math.floor(process.memoryUsage().rss / 1048576) + ' MiB\n';
-    if (uptimeM.uptimeInfo.runningTime) {
-      let t = new Date();
-      let totalTime = t.getTime() - uptimeM.uptimeInfo.firstLaunch;
-      let sessionDuration = t.getTime() - uptimeM.startTime.getTime();
-      let pourcentage = (uptimeM.uptimeInfo.runningTime + sessionDuration) / totalTime * 100;
-      let roundPourcentage = Math.round(pourcentage * 100) / 100;
-      debugMessage += 'Uptime Percentage : ' + roundPourcentage + '%\n';
-    }
-    else {
-      debugMessage += 'Uptime Percentage : 100%\n';
-    }
+    // if (uptimeM.uptimeInfo.runningTime) {
+    //   let t = new Date();
+    //   let totalTime = t.getTime() - uptimeM.uptimeInfo.firstLaunch;
+    //   let sessionDuration = t.getTime() - uptimeM.startTime.getTime();
+    //   let pourcentage = (uptimeM.uptimeInfo.runningTime + sessionDuration) / totalTime * 100;
+    //   let roundPourcentage = Math.round(pourcentage * 100) / 100;
+    //   debugMessage += 'Uptime Percentage : ' + roundPourcentage + '%\n';
+    // }
+    // else {
+    //   debugMessage += 'Uptime Percentage : 100%\n';
+    // }
     debugMessage += '```';
     bot.createMessage(message.channel.id, debugMessage);
   });
