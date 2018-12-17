@@ -19,22 +19,22 @@ require('./src/dbEventInterface');
 logger.log('Database Loaded');
 
 bot.on('ready', () => {
-    logger.log(bot.user.username + '#' + bot.user.discriminator);
-    bot.editStatus('online', {
-      name: configM.config.game,
-    });
-    logger.log('Game has been set to ' + configM.config.game);
-    logger.log('Done !');
+  logger.log(bot.user.username + '#' + bot.user.discriminator);
+  bot.editStatus('online', {
+    name: configM.config.game,
+  });
+  logger.log('Game has been set to ' + configM.config.game);
+  logger.log('Done !');
 });
 
 bot.on('messageCreate', (msg) => {
-    let content = msg.content.replace(new RegExp(`^(?:<@${bot.user.id}> +|\\*)\\b`), '');
-    if (content === msg.content) return;
-    if (msg.author.bot) return;
-    if (msg.author === bot.user) return;
-    if (msg.channel.type !== 0) return;
-    let trimmedContent = content.trim();
-    commandH.apply(trimmedContent, msg);
+  let content = msg.content.replace(new RegExp(`^(?:<@${bot.user.id}> +|\\*)\\b`), '');
+  if (content === msg.content) return;
+  if (msg.author.bot) return;
+  if (msg.author === bot.user) return;
+  if (msg.channel.type !== 0) return;
+  let trimmedContent = content.trim();
+  commandH.apply(trimmedContent, msg);
 });
 
 bot.connect();
