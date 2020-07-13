@@ -9,10 +9,12 @@
   "author": "Alejandro W. Sior, Ben Kyd <benjaminkyd@gmail.com> (https://benkyd.co.uk)",
   "license": "MIT",
   "dependencies": {
+    "bufferutil": "^3.0.5",
     "eris": "^0.13.3",
-    "level": "^6.0.1",
+    "level": "^4.0.0",
     "leveldown": "^5.6.0",
-    "levelup": "^4.4.0",
-    "zlib-sync": "^0.1.7"
+    "snekfetch": "^4.0.4",
+    "uws": "^10.148.1",
+    "zlib-sync": "^0.1.4"
   }
 }

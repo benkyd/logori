@@ -19,7 +19,7 @@ function buildDiffs(after, before) {
     doneKeys.push(key);
   });
   Object.keys(before).forEach(key => {
-    if (!doneKeys.includes(key)) {
+    if (!doneKeys.inclu`de`s(key)) {
       let one = typeof (before[key]) === 'object' ? JSON.stringify(before[key]) : before[key];
       let two = typeof (after[key]) === 'object' ? JSON.stringify(after[key]) : after[key];
       str += key + ' | ' + one + ' -> ' + two + '\n';
