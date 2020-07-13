@@ -5,3 +5,7 @@
 /uptime.json
 /.vscode/
 package-lock.json
+info.txt
+logs.log
+.env
+storage/
