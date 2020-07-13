@@ -1,11 +1,12 @@
 const Logger = require('./logger.js');
-const Database = require('./database.js');
+const Events = require('./discordevents.js');
+const Commands = require('./discordcommands.js');
 
 const fs = require('fs');
 
 const Eris = require('eris');
 
-let bot;
+module.exports.bot;
 
 module.exports.setup = async function()
 {
@@ -13,10 +14,10 @@ module.exports.setup = async function()
     
     if (!process.env.BOT_TOKEN) Logger.panic('No BOT_TOKEN in .env file!')
 
-    bot = new Eris(process.env.BOT_TOKEN, {allowedMentions: false, restMode: true});
+    this.bot = new Eris(process.env.BOT_TOKEN, {allowedMentions: false, restMode: true});
     
-    bot.on('ready', async () => {
-        Logger.info(`Discord logged in as ${bot.user.username}#${bot.user.discriminator}`);
+    this.bot.on('ready', async () => {
+        Logger.info(`Discord logged in as ${this.bot.user.username}#${this.bot.user.discriminator}`);
 
         let typestr = process.env.BOT_GAME_TYPE || 'playing';
         let game = process.env.BOT_GAME || '*';
@@ -29,12 +30,14 @@ module.exports.setup = async function()
             default:          type = 3; break;
         }
 
-        bot.editStatus('online', {name: game, type: type});
+        this.bot.editStatus('online', {name: game, type: type});
 
     });
 
     // settup events
+    Events.setup();
+    Commands.registerCommands();
 
-    bot.connect();
+    this.bot.connect();
 }
 
