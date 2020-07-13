@@ -6,11 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Alejandro W. Sior",
+  "author": "Alejandro W. Sior, Ben Kyd <benjaminkyd@gmail.com> (https://benkyd.co.uk)",
   "license": "MIT",
   "dependencies": {
     "bufferutil": "^3.0.5",
-    "eris": "^0.8.6",
     "level": "^4.0.0",
     "snekfetch": "^4.0.4",
     "uws": "^10.148.1",
