@@ -54,13 +54,25 @@ module.exports.NewGuild = async function(id, name, prefix, logchannel, logsettin
             id: id,
             name: name,
             prefix: prefix,
-            logchannel: logchannel,
+            logchannel: logchannel, // -1 if not set
             logsettings: logsettings,
             modcases: modcases
         });
         return user;
     } catch (e) {
         Logger.error(`An error occured while inserting guild ${id} : ${e}`);
+        return -1;
+    }
+}
+
+
+module.exports.FetchAllGuilds = async function()
+{
+    try {
+        let guild = await Guild.findAll();
+        return guild == null ? -1 : guild;
+    } catch (e) {
+        Logger.error(`An error occured while fetching guilds : ${e}`);
         return -1;
     }
 }
