@@ -8,7 +8,6 @@ const DiscordEmbed = require('./discordembedbuilder.js');
 
 const Eris = require('eris');
 
-
 let GuildsAndLogChannels = [];
 
 module.exports.setup = async function()
@@ -18,7 +17,7 @@ module.exports.setup = async function()
     Discord.bot.on('channelCreate', async (channel) => {ChannelCreate(channel)});
     Discord.bot.on('channelDelete', async (channel) => {ChannelDelete(channel)});
     Discord.bot.on('channelPinUpdate', async (channel, timestamp, oldtimestamp) => {ChannelPinUpdate(channel, timestamp, oldtimestamp)});
-    Discord.bot.on('channelUpdate', async (channel, oldchannel) => {});
+    Discord.bot.on('channelUpdate', async (channel, oldchannel) => {ChannelUpdate(channel, oldchannel)});
     Discord.bot.on('guildBanAdd', async (guild, user) => {});
     Discord.bot.on('guildBanRemove', async (guild, user) => {});
     Discord.bot.on('guildCreate', async (guild) => {});
@@ -33,7 +32,7 @@ module.exports.setup = async function()
     Discord.bot.on('guildUpdate', async (guild, oldguild) => {});
     Discord.bot.on('inviteCreate', async (guild, invite) => {});
     Discord.bot.on('inviteDelete', async (guild, invite) => {});
-    Discord.bot.on('messageCreate', async (message) => Commands.newMessage(message));
+    Discord.bot.on('messageCreate', async (message) => {Commands.newMessage(message)});
     Discord.bot.on('messageDelete', async (message) => {});
     Discord.bot.on('messageDeleteBulk', async (messages) => {});
     Discord.bot.on('messageReactionAdd', async (message, emoji) => {});
@@ -76,8 +75,27 @@ async function GetLogChannel(guildID)
     }
 }
 
+function BuildObjDiff(before, after) {
+    let ret = [];
+    let doneKeys = [];
+    Object.keys(after).forEach(key => {
+        let one = typeof (before[key]) === 'object' ? JSON.stringify(before[key]) : before[key];
+        let two = typeof (after[key]) === 'object' ? JSON.stringify(after[key]) : after[key];
+        ret[one] = two;
+        doneKeys.push(key);
+    });
+    Object.keys(before).forEach(key => {
+        if (!doneKeys.includes(key)) {
+            let one = typeof (before[key]) === 'object' ? JSON.stringify(before[key]) : before[key];
+            let two = typeof (after[key]) === 'object' ? JSON.stringify(after[key]) : after[key];
+            ret[one] = two;
+        }
+    });
+    return ret;
+}
+
 // Richembed defines
-// update: blue #328fA8
+// update: blue #328FA8
 // delete / leave: red #E0532B
 // create / join: green #42A832
 // everything else: yellow #A84C32
@@ -138,8 +156,105 @@ async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
     const FallbackChannel = await GetLogChannel(channel.guild.id)
     if (FallbackChannel == -1) return;
 
-    let pins = await channel.getPins();
+    const LatestPin = (await channel.getPins())[0] || { author: { mention: "Invalid User" } };
 
-    console.log(pins);
+    // if timestamp is greater than the old timestamp
+    // then the pin is new, otherwise, the pin is removed
+    if (timestamp > oldtimestamp)
+    {
+        let embed = new DiscordEmbed({
+            title: `Pin Created`,
+            fields: [
+                { name: 'Channel', value: channel.mention, inline: true },
+                { name: 'Author', value: LatestPin.author.mention, inline: true },
+                { name: 'Content', value: LatestPin.content ? LatestPin.content : "Blank Message", inline: false }
+            ],
+            timestamp: new Date(timestamp),
+            footer: { text: `ID: ${LatestPin.id}` }
+        })
+    
+        embed.colour('#42A832');
+        embed.url('https://logori.xyz')
+    
+        Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+    } else 
+    {
+        let embed = new DiscordEmbed({
+            title: `Pin Removed`,
+            fields: [
+                { name: 'Channel', value: channel.mention, inline: true },
+            ],
+            timestamp: new Date(timestamp),
+            footer: { text: `ID: ${LatestPin.id}` }
+        })
+    
+        embed.colour('#E0532B');
+        embed.url('https://logori.xyz')
+    
+        Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+    }
+}
+
+async function ChannelUpdate(channel, oldchannel)
+{
+    if (!channel.guild) return;
+    const FallbackChannel = await GetLogChannel(channel.guild.id)
+    if (FallbackChannel == -1) return;
+
+    // channels can only be updated one section at a time
+    // that means channel name / topic /nsfw / limiter 
+    // OR orverwrites, never both
+
+    const Type = channel.type == 0 ? 'Text' : 'Voice';
+
+    if (Type == 'Text')
+    {
+        if (channel.name != oldchannel.name
+         || channel.nsfw != oldchannel.nsfw
+         || channel.topic != oldchannel.topic)
+        {
+            let embed = new DiscordEmbed({
+                title: `Channel ${channel.name} Updated`,
+                timestamp: new Date(),
+                footer: { text: `ID: ${channel.id}` }
+            })
+
+            // these include zws characters
+            embed.field('Before', '​', true); 
+            embed.field('After', '​', true); 
+            embed.field('​', '​', true);
+
+            if (channel.name != oldchannel.name)
+            {
+                embed.field('Name:', oldchannel.name, true); 
+                embed.field('Name:', channel.name, true); 
+                embed.field('​', '​', true);
+            }
+            if (channel.nsfw != oldchannel.nsfw)
+            {
+                embed.field('nsfw:', oldchannel.nsfw, true); 
+                embed.field('nsfw:', channel.nsfw, true); 
+                embed.field('​', '​', true);
+            }
+            if (channel.topic != oldchannel.topic)
+            {
+                embed.field('Topic:', oldchannel.topic ? oldchannel.topic : "No topic", true); 
+                embed.field('Topic:', channel.topic ? channel.topic : "No topic", true);
+                embed.field('​', '​', true);
+            }
+            
+            embed.field('Channel', channel.mention, false);
+            
+            embed.colour('#328FA8');
+            embed.url('https://logori.xyz')
+        
+            Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+        }
+
+    } else if (Type == voice)
+    {
+
+    }
+
 
 }
