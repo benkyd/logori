@@ -6,9 +6,9 @@ module.exports.setup = async function()
 {
     Logger.info('Setting up discord listeners');
 
-    Discord.bot.on('channelCreate', async (channel) => {});
-    Discord.bot.on('channelDelete', async (channel) => {});
-    Discord.bot.on('channelPinUpdate', async (channel, timestamp, oldtimestamp) => {});
+    Discord.bot.on('channelCreate', async (channel) => {ChannelCreate(channel)});
+    Discord.bot.on('channelDelete', async (channel) => {ChannelDelete(channel)});
+    Discord.bot.on('channelPinUpdate', async (channel, timestamp, oldtimestamp) => {ChannelPinUpdate()});
     Discord.bot.on('channelUpdate', async (channel, oldchannel) => {});
     Discord.bot.on('guildBanAdd', async (guild, user) => {});
     Discord.bot.on('guildBanRemove', async (guild, user) => {});

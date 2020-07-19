@@ -2,6 +2,7 @@ const Logger = require('./logger.js');
 const Database = require('./database.js');
 const Discord = require('./discord.js');
 const DiscordHelpers = require('./discordhelpers.js');
+const DiscordEmbed = require('./discordembedbuilder.js');
 
 let Commands = [];
 
@@ -32,7 +33,8 @@ module.exports.registerCommands = async function()
 
 module.exports.newMessage = async function(message)
 {
-    // console.log(message.content);
+    // dont respond to bots lol
+    if (message.author.bot) return;
 
     // If there is no guild in the prefix cache
     if (!GuildsAndPrefixs[message.guildID])
@@ -53,6 +55,12 @@ module.exports.newMessage = async function(message)
             GuildsAndPrefixs[message.guildID] = '*'
         }
     }
+
+    // THIS IS JUST FOR TESTING
+    let content = {};
+    content.embed = new DiscordEmbed({title:message.content}).GetSendableObject
+    let logchannel = (await Database.FetchGuild(message.guildID)).logchannel;
+    Discord.bot.createMessage(logchannel, content);
 
     const msg = message.content.split(' ');
 
