@@ -35,8 +35,8 @@ module.exports.setup = async function()
     });
 
     // settup events
-    Events.setup();
-    Commands.registerCommands();
+    await Events.setup();
+    await Commands.registerCommands();
 
     this.bot.connect();
 }

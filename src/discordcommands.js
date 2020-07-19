@@ -1,5 +1,6 @@
 const Logger = require('./logger.js');
 const Database = require('./database.js');
+
 const Discord = require('./discord.js');
 const DiscordHelpers = require('./discordhelpers.js');
 const DiscordEmbed = require('./discordembedbuilder.js');
@@ -26,9 +27,6 @@ module.exports.registerCommands = async function()
     {
         GuildsAndPrefixs[guild.id] = guild.prefix;
     }
-
-    console.log(GuildsAndPrefixs);
-
 }
 
 module.exports.newMessage = async function(message)
@@ -55,12 +53,6 @@ module.exports.newMessage = async function(message)
             GuildsAndPrefixs[message.guildID] = '*'
         }
     }
-
-    // THIS IS JUST FOR TESTING
-    let content = {};
-    content.embed = new DiscordEmbed({title:message.content}).GetSendableObject
-    let logchannel = (await Database.FetchGuild(message.guildID)).logchannel;
-    Discord.bot.createMessage(logchannel, content);
 
     const msg = message.content.split(' ');
 
