@@ -214,14 +214,14 @@ async function ChannelUpdate(channel, oldchannel)
          || channel.topic != oldchannel.topic)
         {
             let embed = new DiscordEmbed({
-                title: `Channel ${channel.name} Updated`,
+                title: `Text Channel ${oldchannel.name} Updated`,
                 timestamp: new Date(),
                 footer: { text: `ID: ${channel.id}` }
             })
 
             // these include zws characters
-            embed.field('Before', '​', true); 
-            embed.field('After', '​', true); 
+            embed.field('​', '**Before**', true); 
+            embed.field('​', '**After**', true); 
             embed.field('​', '​', true);
 
             if (channel.name != oldchannel.name)
@@ -243,12 +243,23 @@ async function ChannelUpdate(channel, oldchannel)
                 embed.field('​', '​', true);
             }
             
-            embed.field('Channel', channel.mention, false);
+            embed.field('Channel', channel.mention, true);
             
             embed.colour('#328FA8');
             embed.url('https://logori.xyz')
-        
-            Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+
+            Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+        }
+
+        if (channel.permissionOverwrites != oldchannel.permissionOverwrites)
+        {
+            channel.permissionOverwrites.forEach(e => console.log(e));
+
+            const oldperm = oldchannel.permissionOverwrites;
+            const newperm = channel.permissionOverwrites;
+
+            
+
         }
 
     } else if (Type == voice)

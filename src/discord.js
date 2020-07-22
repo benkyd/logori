@@ -30,7 +30,7 @@ module.exports.setup = async function()
             default:          type = 3; break;
         }
 
-        this.bot.editStatus('online', {name: game, type: type});[]
+        this.bot.editStatus('online', {name: game, type: type});
 
     });
 
