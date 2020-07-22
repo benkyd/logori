@@ -253,10 +253,70 @@ async function ChannelUpdate(channel, oldchannel)
 
         if (channel.permissionOverwrites != oldchannel.permissionOverwrites)
         {
-            channel.permissionOverwrites.forEach(e => console.log(e));
-
             const oldperm = oldchannel.permissionOverwrites;
             const newperm = channel.permissionOverwrites;
+
+            delete oldperm.baseObject;
+            delete newperm.baseObject
+            delete oldperm.limit
+            delete newperm.limit
+            
+            // oldperm and newperms are collections which
+            // extend map which is a pretty generic unordered
+            // map (in js basically an array lmao)
+
+
+
+            // Role overwrite added
+            for (perm of newperm)
+            {
+                const RoleID = perm[0];
+                // role overwrite already exists
+                if (oldperm.get(RoleID)) continue;
+                const Role = DiscordHelpers.GetGuildRole(channel.guild, RoleID);
+
+                let embed = new DiscordEmbed({
+                    title: 'Channel Overwrite Created',
+                    fields: [
+                        { name: 'Channel', value: channel.mention, inline: true },
+                        { name: 'Role Overwrite', value: Role.name, inline: true },
+                    ],
+                    timestamp: new Date(),
+                    footer: { text: `ID: ${channel.id}` }
+                });
+            
+                embed.colour('#42A832');
+                embed.url('https://logori.xyz');
+                Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+                return;
+            }
+            // Role overwrite removed
+            for (perm of oldperm)
+            {
+                const RoleID = perm[0];
+                // role overwrite already exists
+                if (newperm.get(RoleID)) continue;
+                const Role = DiscordHelpers.GetGuildRole(channel.guild, RoleID);
+                
+                let embed = new DiscordEmbed({
+                    title: 'Channel Overwrite Removed',
+                    fields: [
+                        { name: 'Channel', value: channel.mention, inline: true },
+                        { name: 'Role Overwrite', value: Role.name, inline: true },
+                    ],
+                    timestamp: new Date(),
+                    footer: { text: `ID: ${channel.id}` }
+                });
+            
+                embed.colour('#E0532B');
+                embed.url('https://logori.xyz');
+                Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+                return;
+            }
+
+            // find the overwrites that have changed, there is no chance of a new overwrite
+            // or a deleted one, a diff must be constructed
+            // TODO : make an ambigous role overwrite diff
 
             
 
