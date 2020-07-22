@@ -9,15 +9,12 @@
   "author": "Alejandro W. Sior, Ben Kyd <benjaminkyd@gmail.com> (https://benkyd.co.uk)",
   "license": "MIT",
   "dependencies": {
-    "colors": "^1.4.0",
-    "dotenv": "^8.2.0",
+    "bufferutil": "^3.0.5",
     "eris": "^0.13.3",
-    "level": "^6.0.1",
+    "level": "^4.0.0",
     "leveldown": "^5.6.0",
-    "levelup": "^4.4.0",
-    "moment": "^2.27.0",
-    "sequelize": "^6.3.3",
-    "sqlite3": "^5.0.0",
-    "zlib-sync": "0.1.4"
+    "snekfetch": "^4.0.4",
+    "uws": "^10.148.1",
+    "zlib-sync": "^0.1.4"
   }
 }

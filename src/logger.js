@@ -1,22 +1,112 @@
-exports.log = function log(message) {
-  var date = new Date();
-  console.log(`[${date.getFullYear()}/${date.getDate()}/${(date.getMonth() + 1)}-` +
-  `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}][LOG]${message}`);
-};
+const colours = require('colors/safe');
+const moment = require('moment');
+const fs = require('fs');
 
-exports.warning = function warning(message) {
-  var date = new Date();
-  console.error(`[${date.getFullYear()}/${date.getDate()}/${(date.getMonth() + 1)}-` +
-  `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}][WARNING]${message}`);
-};
+let LogLevel = 1;
+let Dialect = 'SQLITE';
+let logPath = 'logs.log';
+let dateFormat = 'DD-MM-YY HH:mm:ss'
 
-exports.error = function error(message, err) {
-  var date = new Date();
-  console.error(`[${date.getFullYear()}/${date.getDate()}/${(date.getMonth() + 1)}-` +
-  `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}][ERROR]${message}`);
-  if (err) {
-    console.error(err);
-  }
-  console.error('Exiting.');
-  process.exit(-1);
-};
+module.exports.init = function(path) {
+    if (path) logPath = path;
+
+    if (!fs.existsSync(logPath)) {
+        fs.writeFileSync(logPath, '');
+    }
+    fs.appendFileSync(logPath, '[SYSTEM STARTING UP] \n');
+
+    console.log(colours.rainbow('Starting up...'));
+}
+
+module.exports.SetLevel = function(level) {
+    LogLevel = level;
+}
+
+module.exports.SetDialect = function(dialect) {
+    Dialect = dialect;
+}
+
+module.exports.SetDateFormat = function(format) {
+    dateFormat = format;
+}
+
+module.exports.VERBOSE_LOGS = 0;
+module.exports.DEBUG_LOGS   = 1;
+module.exports.INFO_LOGS    = 2;
+module.exports.WARN_LOGS    = 3;
+
+module.exports.welcome = function() {
+    console.log(colours.rainbow(" \
+         __                        _      \n \
+        / /  ___   __ _  ___  _ __(_)     \n \
+       / /  / _ \\ / _` |/ _ \\| '__| |   \n \
+      / /__| (_) | (_| | (_) | |  | |     \n \
+      \\____/\\___/ \\__, |\\___/|_|  |_| \n \
+                  |___/           `       \n \
+        "
+    ))
+}
+
+module.exports.database = function(message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [${Dialect}] ${message} \n`);
+    if (LogLevel > 0) return; 
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.magenta(Dialect) + '] ' + message);
+}
+
+module.exports.middleware = function(origin, message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [MIDDLEWARE: ${origin}] ${message} \n`);
+    if (LogLevel > 0) return; 
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.yellow(`MIDDLEWARE: ${origin}`) + '] ' + message);
+}
+
+module.exports.debug = function(message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [DEBUG] ${message} \n`);
+    if (LogLevel > 1) return; 
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.cyan('DEBUG') + '] ' + message);
+}
+
+module.exports.ready = function() {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [READY] \n`);
+    console.log('[' + d.toLocaleString() + '] ['
+        + colours.rainbow('READY') + ']');
+}
+    
+module.exports.info = function(message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [INFO] ${message} \n`);
+    if (LogLevel > 2) return; 
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.green('INFO') + '] ' + message);
+}
+
+module.exports.warn = function(message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [WARN] ${message} \n`);
+    if (LogLevel > 3) return; 
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.yellow('WARN') + '] ' + message);
+}
+
+module.exports.error = function(message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [ERROR] ${message} \n`);
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.red('ERROR') + '] ' + message);
+}
+
+module.exports.panic = function(message) {
+    let d = moment().format(dateFormat);
+    fs.appendFileSync(logPath, `[${d.toLocaleString()}] [PANIC] ${message} \n`);
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.red('PANIC') + '] ' + message);
+    console.log('[' + d.toLocaleString() + '] [' 
+        + colours.red('PANIC') + '] ABORTING...');
+    process.exit();
+}
