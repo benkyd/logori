@@ -70,7 +70,7 @@ module.exports.newMessage = async function(message)
         // check if admin is required
         if (command.adminOnly)
         {
-            if (DiscordHelpers.IsUserAdmin(message.member))
+            if (DiscordHelpers.IsMemberAdmin(message.member))
             {
                 command.callback(message, args);
                 return;

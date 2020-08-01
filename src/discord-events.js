@@ -24,7 +24,7 @@ module.exports.setup = async function()
     Discord.bot.on('guildDelete', async (guild) => {});
     Discord.bot.on('guildEmojisUpdate', async (guild, emojis, oldemojis) => {GuildEmojisUpdate(guild, emojis, oldemojis)});
     Discord.bot.on('guildMemberAdd', async (guild, member) => {GuildMemberAdd(guild, member)});
-    Discord.bot.on('guildMemberRemove', async (guild, member) => {});
+    Discord.bot.on('guildMemberRemove', async (guild, member) => {GuildMemberRemove(guild, member)});
     Discord.bot.on('guildMemberUpdate', async (guild, member, oldmember) => {});
     Discord.bot.on('guildRoleCreate', async (guild, role) => {});
     Discord.bot.on('guildRoleDelete', async (guild, role) => {});
@@ -94,6 +94,34 @@ function BuildObjDiff(before, after) {
     return ret;
 }
 
+function AddOrdinalSuffix(i) {
+    let j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+function ColourConvert(colour)
+{
+    let base = 10;
+    if (typeof colour === 'string' && colour.startsWith('#')) {
+        colour = colour.replace('#', '');
+        base = 16;
+    }
+    colour = parseInt(colour, base);
+    if (colour < 0 || colour > 0xFFFFFF) throw new Error('Colour must be a valid HEX-colour for HTML or be an integer within 0 - 16777215');
+    else if (colour && isNaN(colour)) throw new Error('Could not convert colour to number.');
+    return colour;
+}
+
 // Non-logable events
 
 async function GuildCreate(guild)
@@ -145,12 +173,11 @@ async function ChannelCreate(channel)
             { name: 'Name', value: channel.mention, inline: true },
             { name: 'Parent Catagory', value: DiscordHelpers.GetGuildCatatory(channel.guild, channel.parentID).name, inline: true }
         ],
+        colour: ColourConvert('#42A832'),
+        url: 'https://logori.xyz',
         timestamp: new Date(),
         footer: { text: `ID: ${channel.id}` }
-    })
-
-    embed.colour('#42A832');
-    embed.url('https://logori.xyz')
+    });
 
     Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
 
@@ -170,12 +197,11 @@ async function ChannelDelete(channel)
             { name: 'Name', value: channel.name, inline: true },
             { name: 'Parent Catagory', value: DiscordHelpers.GetGuildCatatory(channel.guild, channel.parentID).name, inline: true }
         ],
+        colour: ColourConvert('#E0532B'),
+        url: 'https://logori.xyz',
         timestamp: new Date(),
         footer: { text: `ID: ${channel.id}` }
-    })
-
-    embed.colour('#E0532B');
-    embed.url('https://logori.xyz')
+    });
 
     Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
 }
@@ -199,12 +225,11 @@ async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
                 { name: 'Author', value: LatestPin.author.mention, inline: true },
                 { name: 'Content', value: LatestPin.content ? LatestPin.content : "Blank Message", inline: false }
             ],
+            colour: '#42A832',
+            url: 'https://logori.xyz',
             timestamp: new Date(timestamp),
             footer: { text: `ID: ${LatestPin.id}` }
-        })
-    
-        embed.colour('#42A832');
-        embed.url('https://logori.xyz')
+        });
     
         Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
     } else 
@@ -214,12 +239,11 @@ async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
             fields: [
                 { name: 'Channel', value: channel.mention, inline: true },
             ],
+            colour: ColourConvert('#E0532B'),
+            url: 'https://logori.xyz',
             timestamp: new Date(timestamp),
             footer: { text: `ID: ${LatestPin.id}` }
-        })
-    
-        embed.colour('#E0532B');
-        embed.url('https://logori.xyz')
+        });
     
         Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
     }
@@ -245,9 +269,11 @@ async function ChannelUpdate(channel, oldchannel)
         {
             let embed = new DiscordEmbed({
                 title: `Text Channel ${oldchannel.name} Updated`,
+                colour: ColourConvert('#328FA8'),
+                url: 'https://logori.xyz',
                 timestamp: new Date(),
                 footer: { text: `ID: ${channel.id}` }
-            })
+            });
 
             // these include zws characters
             embed.field('​', '**Before**', true); 
@@ -275,9 +301,6 @@ async function ChannelUpdate(channel, oldchannel)
             
             embed.field('Channel', channel.mention, true);
             
-            embed.colour('#328FA8');
-            embed.url('https://logori.xyz')
-
             Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
         }
 
@@ -309,12 +332,12 @@ async function ChannelUpdate(channel, oldchannel)
                         { name: 'Channel', value: channel.mention, inline: true },
                         { name: 'Role Overwrite', value: Role.name, inline: true },
                     ],
+                    colour: ColourConvert('#42A832'),
+                    url: 'https://logori.xyz',
                     timestamp: new Date(),
                     footer: { text: `ID: ${channel.id}` }
                 });
-            
-                embed.colour('#42A832');
-                embed.url('https://logori.xyz');
+
                 Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
                 return;
             }
@@ -332,12 +355,12 @@ async function ChannelUpdate(channel, oldchannel)
                         { name: 'Channel', value: channel.mention, inline: true },
                         { name: 'Role Overwrite', value: Role.name, inline: true },
                     ],
+                    colour: ColourConvert('#E0532B'),
+                    url: 'https://logori.xyz',
                     timestamp: new Date(),
                     footer: { text: `ID: ${channel.id}` }
                 });
-            
-                embed.colour('#E0532B');
-                embed.url('https://logori.xyz');
+
                 Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
                 return;
             }
@@ -380,6 +403,8 @@ async function GuildBanAdd(guild, user)
         },
         title: `${user.username}#${user.discriminator} Was Banned`,
         description: `Mod Case: ${ModCases}`,
+        colour: ColourConvert('#F0F03A'),
+        url: 'https://logori.xyz',
         timestamp: new Date(),
         footer: { text: `ID: ${user.id}` }
     });
@@ -387,9 +412,6 @@ async function GuildBanAdd(guild, user)
     embed.field('​', `**Name**: ${user.mention}
     **Responsible Moderator**: ${Banner.mention}
     **Reason**: ${BanReason}`, false);
-
-    embed.colour('#F0F03A');
-    embed.url('https://logori.xyz')
 
     Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
@@ -415,15 +437,14 @@ async function GuildBanRemove(guild, user)
         },
         title: `${user.username}#${user.discriminator} Was UnBanned`,
         description: `Mod Case: ${ModCases}`,
+        colour: ColourConvert('#F0F03A'),
+        url: 'https://logori.xyz',
         timestamp: new Date(),
         footer: { text: `ID: ${user.id}` }
     });
 
     embed.field('​', `**Name**: ${user.mention}
     **Responsible Moderator**: ${Banner.mention}`, false);
-
-    embed.colour('#F0F03A');
-    embed.url('https://logori.xyz')
 
     Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
@@ -436,11 +457,39 @@ async function GuildEmojisUpdate(guild, emojis, oldemojis)
 async function GuildMemberAdd(guild, member)
 {
     // This function implements AJDS (Anti-James-Defense-System)
-    // which uses user heuristics to determine a users risk to
+    // which uses user heuristics to determine a members risk to
     // a discord server, and with a high enough risk factor, notify
     // the appropriate moderators
 
-    
+    // Part of the log will include the risks of the member
 
+    const FallbackChannel = await GetLogChannel(guild.id);
+    if (FallbackChannel == -1) return;
+
+    // AJDS warnings 
+    let MemberWarnings = [];
+    let MemberScore;
+
+    // TODO: Get proper join position
+    let embed = new DiscordEmbed({
+        author: {
+            name: `${member.username}#${member.discriminator}`,
+            icon_url: member.avatarURL,
+            url: 'https://logori.xyz'
+        },
+        title: 'Member Joined',
+        colour: ColourConvert('#42A832'),
+        url: 'https://logori.xyz',
+        timestamp: new Date(),
+        footer: { text: `ID: ${member.id}` }
+    });
+
+    // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
+
+    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
 
+async function GuildMemberRemove(guild, member)
+{
+
+}
