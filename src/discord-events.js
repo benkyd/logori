@@ -1,10 +1,10 @@
 const Logger = require('./logger.js');
 const Database = require('./database.js');
-const Commands = require('./discordcommands.js');
+const Commands = require('./discord-commands.js');
 
 const Discord = require('./discord.js');
-const DiscordHelpers = require('./discordhelpers.js');
-const DiscordEmbed = require('./discordembedbuilder.js');
+const DiscordHelpers = require('./discord-helpers.js');
+const DiscordEmbed = require('./discord-embedbuilder.js');
 
 const Eris = require('eris');
 
@@ -18,12 +18,12 @@ module.exports.setup = async function()
     Discord.bot.on('channelDelete', async (channel) => {ChannelDelete(channel)});
     Discord.bot.on('channelPinUpdate', async (channel, timestamp, oldtimestamp) => {ChannelPinUpdate(channel, timestamp, oldtimestamp)});
     Discord.bot.on('channelUpdate', async (channel, oldchannel) => {ChannelUpdate(channel, oldchannel)});
-    Discord.bot.on('guildBanAdd', async (guild, user) => {});
-    Discord.bot.on('guildBanRemove', async (guild, user) => {});
+    Discord.bot.on('guildBanAdd', async (guild, user) => {GuildBanAdd(guild, user)});
+    Discord.bot.on('guildBanRemove', async (guild, user) => {GuildBanRemove(guild, user)});
     Discord.bot.on('guildCreate', async (guild) => {});
     Discord.bot.on('guildDelete', async (guild) => {});
-    Discord.bot.on('guildEmojisUpdate', async (guild, emojis, oldemojis) => {});
-    Discord.bot.on('guildMemberAdd', async (guild, member) => {});
+    Discord.bot.on('guildEmojisUpdate', async (guild, emojis, oldemojis) => {GuildEmojisUpdate(guild, emojis, oldemojis)});
+    Discord.bot.on('guildMemberAdd', async (guild, member) => {GuildMemberAdd(guild, member)});
     Discord.bot.on('guildMemberRemove', async (guild, member) => {});
     Discord.bot.on('guildMemberUpdate', async (guild, member, oldmember) => {});
     Discord.bot.on('guildRoleCreate', async (guild, role) => {});
@@ -60,7 +60,7 @@ module.exports.setup = async function()
     }
 }
 
-// Handlers
+// Handlers / Helpers
 
 async function GetLogChannel(guildID)
 {
@@ -94,12 +94,42 @@ function BuildObjDiff(before, after) {
     return ret;
 }
 
+// Non-logable events
+
+async function GuildCreate(guild)
+{
+    
+}
+
+async function GuildDelete(guild)
+{
+
+}
+
+async function Warn(message, id)
+{
+
+}
+
+async function Error(error, id)
+{
+
+}
+
+async function Disconnect(options)
+{
+
+}
+
 // Richembed defines
 // update: blue #328FA8
 // delete / leave: red #E0532B
 // create / join: green #42A832
-// everything else: yellow #A84C32
+// everything else: yellow #F0F03A
 // customisable features in the future?
+
+// would do website logging before return if fallback
+// channel is undefined
 
 async function ChannelCreate(channel)
 {
@@ -265,8 +295,6 @@ async function ChannelUpdate(channel, oldchannel)
             // extend map which is a pretty generic unordered
             // map (in js basically an array lmao)
 
-
-
             // Role overwrite added
             for (perm of newperm)
             {
@@ -318,7 +346,7 @@ async function ChannelUpdate(channel, oldchannel)
             // or a deleted one, a diff must be constructed
             // TODO : make an ambigous role overwrite diff
 
-            
+            // gonna skip this for now, need an overwriter method
 
         }
 
@@ -326,6 +354,93 @@ async function ChannelUpdate(channel, oldchannel)
     {
 
     }
+}
 
+async function GuildBanAdd(guild, user)
+{
+    const FallbackChannel = await GetLogChannel(guild.id);
+    if (FallbackChannel == -1) return;
+
+    const ModCases = (await Database.FetchGuild(guild.id)).modcases;
+    // Doesn't need to be async - if it fails it's not the end of the world
+    Database.IncrementGuildModCases(guild.id);
+
+    // 22 is member ban add
+    const LastBanLog = await guild.getAuditLogs(1, undefined, 22);
+    const Ban = await guild.getBan(user.id);
+
+    const BanReason = Ban.reason ? Ban.reason : 'No Reason Given';
+    const Banner = await Discord.bot.getRESTUser(LastBanLog.users[0].id);
+
+    let embed = new DiscordEmbed({
+        author: {
+            name: `${user.username}#${user.discriminator}`,
+            icon_url: user.avatarURL,
+            url: 'https://logori.xyz'
+        },
+        title: `${user.username}#${user.discriminator} Was Banned`,
+        description: `Mod Case: ${ModCases}`,
+        timestamp: new Date(),
+        footer: { text: `ID: ${user.id}` }
+    });
+
+    embed.field('​', `**Name**: ${user.mention}
+    **Responsible Moderator**: ${Banner.mention}
+    **Reason**: ${BanReason}`, false);
+
+    embed.colour('#F0F03A');
+    embed.url('https://logori.xyz')
+
+    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+}
+
+async function GuildBanRemove(guild, user)
+{
+    const FallbackChannel = await GetLogChannel(guild.id);
+    if (FallbackChannel == -1) return;
+
+    const ModCases = (await Database.FetchGuild(guild.id)).modcases;
+    // Doesn't need to be async - if it fails it's not the end of the world
+    Database.IncrementGuildModCases(guild.id);
+
+    // 23 is member ban remove
+    const LastBanLog = await guild.getAuditLogs(1, undefined, 23);
+    const Banner = await Discord.bot.getRESTUser(LastBanLog.users[0].id);
+
+    let embed = new DiscordEmbed({
+        author: {
+            name: `${user.username}#${user.discriminator}`,
+            icon_url: user.avatarURL,
+            url: 'https://logori.xyz'
+        },
+        title: `${user.username}#${user.discriminator} Was UnBanned`,
+        description: `Mod Case: ${ModCases}`,
+        timestamp: new Date(),
+        footer: { text: `ID: ${user.id}` }
+    });
+
+    embed.field('​', `**Name**: ${user.mention}
+    **Responsible Moderator**: ${Banner.mention}`, false);
+
+    embed.colour('#F0F03A');
+    embed.url('https://logori.xyz')
+
+    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+}
+
+async function GuildEmojisUpdate(guild, emojis, oldemojis)
+{
 
 }
+
+async function GuildMemberAdd(guild, member)
+{
+    // This function implements AJDS (Anti-James-Defense-System)
+    // which uses user heuristics to determine a users risk to
+    // a discord server, and with a high enough risk factor, notify
+    // the appropriate moderators
+
+    
+
+}
+

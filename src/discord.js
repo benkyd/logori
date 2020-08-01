@@ -1,6 +1,6 @@
 const Logger = require('./logger.js');
-const Events = require('./discordevents.js');
-const Commands = require('./discordcommands.js');
+const Events = require('./discord-events.js');
+const Commands = require('./discord-commands.js');
 
 const fs = require('fs');
 

@@ -2,8 +2,8 @@ const Logger = require('./logger.js');
 const Database = require('./database.js');
 
 const Discord = require('./discord.js');
-const DiscordHelpers = require('./discordhelpers.js');
-const DiscordEmbed = require('./discordembedbuilder.js');
+const DiscordHelpers = require('./discord-helpers.js');
+const DiscordEmbed = require('./discord-embedbuilder.js');
 
 let Commands = [];
 
