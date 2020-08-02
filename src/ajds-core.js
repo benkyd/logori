@@ -70,6 +70,24 @@ module.exports.ScoreMember = async function(erismember)
         ret.score -= 5;
     }
 
+    // Time to score
+
+    // perfect score is 20
+    // worst score is -10
+
+    if (ret.score >= 10)
+        ret.literalscore = 'Users account is trustworthy'
+    else if (ret.score >= 5)
+        ret.literalscore = 'Users account is relatively trustworthy'
+    else if (ret.score >= 0)
+        ret.literalscore = 'Users account is most likely untrustworthy '
+    else if (ret.score >= -6)
+        ret.literalscore = 'Users account is untrustworthy'
+    else
+        ret.literalscore = 'Users account is untrustworthy and to be handled with great caution'
+
+    return ret;
+
 }
 
 module.exports.NickCheck = function(name)
