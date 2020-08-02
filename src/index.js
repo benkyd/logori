@@ -2,6 +2,8 @@ const Logger = require('./logger.js');
 const Database = require('./database.js');
 const Discord = require('./discord.js');
 
+const AJDS = require('./ajds-core.js')
+
 require('dotenv').config()
 
 module.exports.main = async function()
