@@ -6,6 +6,8 @@ const Discord = require('./discord.js');
 const DiscordHelpers = require('./discord-helpers.js');
 const DiscordEmbed = require('./discord-embedbuilder.js');
 
+const ADJSCore = require('./ajds-core.js');
+
 const Eris = require('eris');
 
 let GuildsAndLogChannels = [];
@@ -467,6 +469,7 @@ async function GuildMemberAdd(guild, member)
     if (FallbackChannel == -1) return;
 
     // AJDS warnings 
+
     let MemberWarnings = [];
     let MemberScore;
 
@@ -484,6 +487,8 @@ async function GuildMemberAdd(guild, member)
         footer: { text: `ID: ${member.id}` }
     });
 
+    embed.field('​', `**Member:** ${member.mention}`);
+
     // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
 
     Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
@@ -491,5 +496,23 @@ async function GuildMemberAdd(guild, member)
 
 async function GuildMemberRemove(guild, member)
 {
+    const FallbackChannel = await GetLogChannel(guild.id);
+    if (FallbackChannel == -1) return;
 
+    let embed = new DiscordEmbed({
+        author: {
+            name: `${member.username}#${member.discriminator}`,
+            icon_url: member.avatarURL,
+            url: 'https://logori.xyz'
+        },
+        title: 'Member Left',
+        colour: ColourConvert('#E0532B'),
+        url: 'https://logori.xyz',
+        timestamp: new Date(),
+        footer: { text: `ID: ${member.id}` }
+    });
+
+    embed.field('​', `**Member:** ${member.mention}`);
+
+    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
