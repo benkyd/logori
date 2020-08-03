@@ -49,9 +49,9 @@ module.exports.setup = async function()
     Discord.bot.on('voiceChannelSwitch', async (member, newchannel, oldchannel) => {});
     Discord.bot.on('voiceStateUpdate', async (member, oldstate) => {});
     Discord.bot.on('webhooksUpdate', async (data, channelid, guildid) => {});
-    Discord.bot.on('warn', async (message, id) => {});
-    Discord.bot.on('error', async (error, id) => {});
-    Discord.bot.on('disconnect', async (options) => {});
+    Discord.bot.on('warn', async (message, id) => {Warn(message, id)});
+    Discord.bot.on('error', async (error, id) => {Error(error, id)});
+    Discord.bot.on('disconnect', async (options) => {Disconnect(options)});
 
     // settup log channel cache
     const guilds = await Database.FetchAllGuilds();
@@ -138,17 +138,17 @@ async function GuildDelete(guild)
 
 async function Warn(message, id)
 {
-
+    Logger.warn('Discord: ' + message);
 }
 
 async function Error(error, id)
 {
-
+    Logger.error('Discord: ' + error);
 }
 
 async function Disconnect(options)
 {
-
+    Logger.error('Logori disconnected');
 }
 
 // Richembed defines
@@ -469,9 +469,7 @@ async function GuildMemberAdd(guild, member)
     if (FallbackChannel == -1) return;
 
     // AJDS warnings 
-
-    let MemberWarnings = [];
-    let MemberScore;
+    let AJDSScore = await ADJSCore.ScoreMember(member);
 
     // TODO: Get proper join position
     let embed = new DiscordEmbed({
@@ -487,7 +485,36 @@ async function GuildMemberAdd(guild, member)
         footer: { text: `ID: ${member.id}` }
     });
 
-    embed.field('​', `**Member:** ${member.mention}`);
+    let WarningString = '';
+
+    if (AJDSScore.warnings.length != 0)
+    {
+        WarningString += '***Warnings:***\n'
+        for (warning of AJDSScore.warnings)
+        {
+            switch (warning.severity)
+            {
+                default:
+                case 0:
+                    WarningString += warning.warning + '\n';
+                    break;
+                case 1:
+                    WarningString += '⚠️' + warning.warning + '⚠️\n';
+                    break;
+                case 2:
+                    WarningString += '⚠️' + warning.warning.toUpperCase() + '⚠️\n';
+                    break;
+                case 3:
+                    WarningString += '🚨⚠️❗**' + warning.warning.toUpperCase() + '**❗⚠️🚨\n';
+                    break;
+            }
+        }
+    } 
+
+    embed.field('​', `**Member:** ${member.mention}
+    **AJDS Results:**
+    *${AJDSScore.literalscore}*
+    ${WarningString ? WarningString : ''}`);
 
     // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
 

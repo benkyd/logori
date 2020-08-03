@@ -31,15 +31,15 @@ module.exports.ScoreMember = async function(erismember)
     // prior to 2 days, deduct 5 points
     let Age = new Date().getTime() - ((erismember.id >> 22 >>> 0) + 1420070400000);
     // age in days
-    Age = Math.floor(age / 1000 / 60 / 60 / 24);
+    Age = Math.floor(Age / 1000 / 60 / 60 / 24);
     
-    if (age < 2)
+    if (Age < 2)
     {
         ret.score -= 5;
         ret.warnings.push({warning: 'member account very new', severity: 2});
     } else 
     {
-        let AgeScore = Math.min(Math.max(0, age / 2 - 1), 10);
+        let AgeScore = Math.min(Math.max(0, Age / 2 - 1), 10);
         if (AgeScore > 10) ret.warnings.push({warning: 'member account new', severity: 1});
         ret.score += AgeScore;
     }
@@ -67,24 +67,24 @@ module.exports.ScoreMember = async function(erismember)
         {
             ret.warnings.push({warning: `members name contains offensive word: ${OffensiveWord}`, severity: 3});
         }
-        ret.score -= 5;
+        ret.score -= 10;
     }
 
     // Time to score
 
     // perfect score is 20
-    // worst score is -10
+    // worst score is -20
 
     if (ret.score >= 10)
-        ret.literalscore = 'Users account is trustworthy'
+        ret.literalscore = 'Members account is trustworthy'
     else if (ret.score >= 5)
-        ret.literalscore = 'Users account is relatively trustworthy'
+        ret.literalscore = 'Members account is relatively trustworthy'
     else if (ret.score >= 0)
-        ret.literalscore = 'Users account is most likely untrustworthy '
+        ret.literalscore = 'Members account is most likely untrustworthy'
     else if (ret.score >= -6)
-        ret.literalscore = 'Users account is untrustworthy'
+        ret.literalscore = 'Members account is untrustworthy'
     else
-        ret.literalscore = 'Users account is untrustworthy and to be handled with great caution'
+        ret.literalscore = 'Members account is untrustworthy and to be handled with great caution'
 
     return ret;
 
