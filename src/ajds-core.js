@@ -86,8 +86,9 @@ module.exports.ScoreMember = async function(erismember)
     else
         ret.literalscore = 'Members account is untrustworthy and to be handled with great caution'
 
-    return ret;
+    // TODO: suggested action
 
+    return ret;
 }
 
 module.exports.NickCheck = function(name)

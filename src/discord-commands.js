@@ -15,7 +15,7 @@ module.exports.registerCommands = async function()
 
     Commands['initserv'] = { command: 'initserv', alias: 'nil', name: 'Initialize Server', desc: 'Initialises a new Guild', callback: InitializeGuild, adminOnly: true };
     Commands['setprefix'] = { command: 'setprefix', alias: 'prefix', name: 'Set Prefix', desc: 'Sets the servers prefix for the guild', callback: SetPrefix, adminOnly: true };
-
+    Commands['setlogchannel'] = { command: 'setlogchannel', alias: 'log', name: 'Set Log Channel', desc: 'Sets the guild log channel to the current channel', callback: SetLogChannel, adminOnly: true };
 
     // create a cache of prefix's so that the database doesn't have to be 
     // queried every single time, new guilds should also add themselve's
@@ -108,7 +108,7 @@ module.exports.newMessage = async function(message)
 
 async function InitializeGuild(message, args)
 {
-    console.log('InitGuild called');
+    
 }
 
 async function SetPrefix(message, args)
@@ -127,4 +127,9 @@ async function SetPrefix(message, args)
     GuildsAndPrefixs[message.guildID] = NewPrefix;
 
     Discord.bot.createMessage(message.channel.id, `New prefix for guild : \`${NewPrefix}\``)
+}
+
+async function SetLogChannel(message, args)
+{
+
 }

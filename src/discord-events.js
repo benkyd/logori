@@ -22,8 +22,8 @@ module.exports.setup = async function()
     Discord.bot.on('channelUpdate', async (channel, oldchannel) => {ChannelUpdate(channel, oldchannel)});
     Discord.bot.on('guildBanAdd', async (guild, user) => {GuildBanAdd(guild, user)});
     Discord.bot.on('guildBanRemove', async (guild, user) => {GuildBanRemove(guild, user)});
-    Discord.bot.on('guildCreate', async (guild) => {});
-    Discord.bot.on('guildDelete', async (guild) => {});
+    Discord.bot.on('guildCreate', async (guild) => {GuildCreate(guild)});
+    Discord.bot.on('guildDelete', async (guild) => {GuildDelete(guild)});
     Discord.bot.on('guildEmojisUpdate', async (guild, emojis, oldemojis) => {GuildEmojisUpdate(guild, emojis, oldemojis)});
     Discord.bot.on('guildMemberAdd', async (guild, member) => {GuildMemberAdd(guild, member)});
     Discord.bot.on('guildMemberRemove', async (guild, member) => {GuildMemberRemove(guild, member)});
@@ -35,7 +35,7 @@ module.exports.setup = async function()
     Discord.bot.on('inviteCreate', async (guild, invite) => {});
     Discord.bot.on('inviteDelete', async (guild, invite) => {});
     Discord.bot.on('messageCreate', async (message) => {Commands.newMessage(message)});
-    Discord.bot.on('messageDelete', async (message) => {});
+    Discord.bot.on('messageDelete', async (message) => {MessageDelete(message)});
     Discord.bot.on('messageDeleteBulk', async (messages) => {});
     Discord.bot.on('messageReactionAdd', async (message, emoji) => {});
     Discord.bot.on('messageReactionRemove', async (message, emoji) => {});
@@ -540,6 +540,37 @@ async function GuildMemberRemove(guild, member)
     });
 
     embed.field('​', `**Member:** ${member.mention}`);
+
+    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+}
+
+async function MessageDelete(message)
+{
+    Logger.debug(JSON.stringify(message, null, 4));
+    const FallbackChannel = await GetLogChannel(message.channel.guild.id);
+    if (FallbackChannel == -1) return;
+
+    const LastAuditEntry = (await message.channel.guild.getAuditLogs(1)).entries[0];
+    Logger.debug(JSON.stringify(LastAuditEntry, null, 4))
+
+    let embed = new DiscordEmbed({
+        title: 'Message Deleted',
+        colour: ColourConvert('#E0532B'),
+        url: 'https://logori.xyz',
+        timestamp: new Date(),
+        footer: { text: `ID: ${message.id}` }
+    });
+
+    // user DIDDNT deleted own message
+    // if (entry.actionType === 72) {
+
+    // entry.user = responsible user
+    // rest is in message.author etc
+
+    embed.field('​', `**Message Owner:** ${LastAuditEntry.messages.author.mention}
+    **Responsible Moderator**: ${LastAuditEntry.user.mention}
+    **Channel:** ${message.channel.mention}
+    **Message Content:** ${LastAuditEntry.messages.content} `);
 
     Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
