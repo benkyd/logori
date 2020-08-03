@@ -41,7 +41,7 @@ module.exports.setup = async function()
     Discord.bot.on('messageReactionRemove', async (message, emoji) => {});
     Discord.bot.on('messageReactionRemoveAll', async (message) => {});
     Discord.bot.on('messageReactionRemoveEmoji', async (message, emoji) => {});
-    Discord.bot.on('messageUpdate', async (message, oldmessage) => {});
+    Discord.bot.on('messageUpdate', async (message, oldmessage) => {MessageUpdate(message, oldmessage)});
     Discord.bot.on('presenceUpdate', async (member, oldprescence) => {});
     Discord.bot.on('userUpdate', async (user, olduser) => {});
     Discord.bot.on('voiceChannelJoin', async (member, newchannel) => {});
@@ -61,6 +61,44 @@ module.exports.setup = async function()
         GuildsAndLogChannels[guild.id] = guild.logchannel;
     }
 }
+
+// Audit log defines
+
+const GUILD_UPDATE = 1;
+const CHANNEL_CREATE = 10;
+const CHANNEL_UPDATE = 11;
+const CHANNEL_DELETE = 12;
+const CHANNEL_OVERWRITE_CREATE = 13;
+const CHANNEL_OVERWRITE_UPDATE = 14;
+const CHANNEL_OVERWRITE_DELETE = 15;
+const MEMBER_KICK = 20;
+const MEMBER_PRUNE = 21;
+const MEMBER_BAN_ADD = 22;
+const MEMBER_BAN_REMOVE = 23;
+const MEMBER_UPDATE = 24;
+const MEMBER_ROLE_UPDATE = 25;
+const MEMBER_MOVE =	26;
+const MEMBER_DISCONNECT = 27;
+const BOT_ADD =	28;
+const ROLE_CREATE =	30;
+const ROLE_UPDATE =	31;
+const ROLE_DELETE =	32;
+const INVITE_CREATE = 40;
+const INVITE_UPDATE = 41;
+const INVITE_DELETE = 42;
+const WEBHOOK_CREATE = 50;
+const WEBHOOK_UPDATE = 51;
+const WEBHOOK_DELETE = 52;
+const EMOJI_CREATE = 60;
+const EMOJI_UPDATE = 61;
+const EMOJI_DELETE = 62;
+const MESSAGE_DELETE = 72;
+const MESSAGE_BULK_DELETE =	73;
+const MESSAGE_PIN =	74;
+const MESSAGE_UNPIN = 75;
+const INTEGRATION_CREATE = 80;
+const INTEGRATION_UPDATE = 81;
+const INTEGRATION_DELETE = 82;
 
 // Handlers / Helpers
 
@@ -391,7 +429,7 @@ async function GuildBanAdd(guild, user)
     Database.IncrementGuildModCases(guild.id);
 
     // 22 is member ban add
-    const LastBanLog = await guild.getAuditLogs(1, undefined, 22);
+    const LastBanLog = await guild.getAuditLogs(1, undefined, MEMBER_BAN_ADD);
     const Ban = await guild.getBan(user.id);
 
     const BanReason = Ban.reason ? Ban.reason : 'No Reason Given';
@@ -428,7 +466,7 @@ async function GuildBanRemove(guild, user)
     Database.IncrementGuildModCases(guild.id);
 
     // 23 is member ban remove
-    const LastBanLog = await guild.getAuditLogs(1, undefined, 23);
+    const LastBanLog = await guild.getAuditLogs(1, undefined, MEMBER_BAN_REMOVE);
     const Banner = await Discord.bot.getRESTUser(LastBanLog.users[0].id);
 
     let embed = new DiscordEmbed({
@@ -546,15 +584,17 @@ async function GuildMemberRemove(guild, member)
 
 async function MessageDelete(message)
 {
-    Logger.debug(JSON.stringify(message, null, 4));
+    // Logger.debug(JSON.stringify(message, null, 4));
     const FallbackChannel = await GetLogChannel(message.channel.guild.id);
     if (FallbackChannel == -1) return;
 
     const LastAuditEntry = (await message.channel.guild.getAuditLogs(1)).entries[0];
-    Logger.debug(JSON.stringify(LastAuditEntry, null, 4))
+    
+    const DeletedMessage = LastAuditEntry.channel.messages.random();
+    Logger.debug(JSON.stringify(DeletedMessage, null, 4))
 
     let embed = new DiscordEmbed({
-        title: 'Message Deleted',
+        title: LastAuditEntry.actionType == MESSAGE_DELETE ? 'Message Deleted' : 'User Deleted Own Message',
         colour: ColourConvert('#E0532B'),
         url: 'https://logori.xyz',
         timestamp: new Date(),
@@ -562,15 +602,24 @@ async function MessageDelete(message)
     });
 
     // user DIDDNT deleted own message
-    // if (entry.actionType === 72) {
-
-    // entry.user = responsible user
-    // rest is in message.author etc
-
-    embed.field('​', `**Message Owner:** ${LastAuditEntry.messages.author.mention}
-    **Responsible Moderator**: ${LastAuditEntry.user.mention}
-    **Channel:** ${message.channel.mention}
-    **Message Content:** ${LastAuditEntry.messages.content} `);
+    if (LastAuditEntry.actionType == MESSAGE_DELETE) 
+    {
+        embed.field('​', `**Message Owner:** ${DeletedMessage.author.mention}
+        **Responsible Moderator**: ${LastAuditEntry.user.mention}
+        **Channel:** ${message.channel.mention}
+        **Message Content:** ${DeletedMessage.content} `);
+    } else 
+    {
+        embed.field('​', `**Message Owner:** ${DeletedMessage.author.mention}
+        **Channel:** ${message.channel.mention}
+        **Message Content:** ${DeletedMessage.content} `);
+    }
 
     Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+}
+
+async function MessageUpdate(message, oldmessage)
+{
+    const FallbackChannel = await GetLogChannel(message.channel.guild.id);
+    if (FallbackChannel == -1) return;
 }
