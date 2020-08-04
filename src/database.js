@@ -88,6 +88,15 @@ module.exports.FetchGuild = async function(id)
     }
 }
 
+module.exports.UpdateGuildName = async function(id, name)
+{
+    try {
+        await Guild.update({name: name}, {where: {id: id}});
+    } catch (e) {
+
+    }
+}
+
 module.exports.UpdateGuildPrefix = async function(id, prefix)
 {
     try {

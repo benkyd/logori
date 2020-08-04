@@ -15,7 +15,7 @@ module.exports.registerCommands = async function()
 
     Commands['initserv'] = { command: 'initserv', alias: 'nil', name: 'Initialize Server', desc: 'Initialises a new Guild', callback: InitializeGuild, adminOnly: true };
     Commands['setprefix'] = { command: 'setprefix', alias: 'prefix', name: 'Set Prefix', desc: 'Sets the servers prefix for the guild', callback: SetPrefix, adminOnly: true };
-    Commands['setlogchannel'] = { command: 'setlogchannel', alias: 'log', name: 'Set Log Channel', desc: 'Sets the guild log channel to the current channel', callback: SetLogChannel, adminOnly: true };
+    Commands['setfallbackchannel'] = { command: 'setlogchannel', alias: 'setlogchannel', name: 'Set Log Channel', desc: 'Sets the guild log channel to the current channel', callback: SetLogChannel, adminOnly: true };
 
     // create a cache of prefix's so that the database doesn't have to be 
     // queried every single time, new guilds should also add themselve's
@@ -108,6 +108,7 @@ module.exports.newMessage = async function(message)
 
 async function InitializeGuild(message, args)
 {
+    // Outlines private policy etc
     
 }
 

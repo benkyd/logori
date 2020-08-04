@@ -4,7 +4,9 @@
   "description": "A discord bot intended to complete the audit log",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "development": "nodemon",
+    "run": "node index.js",
+    "deploypm2": "pm2 start index.js --name \"logori\""
   },
   "author": "Alejandro W. Sior, Ben Kyd <benjaminkyd@gmail.com> (https://benkyd.co.uk)",
   "license": "MIT",

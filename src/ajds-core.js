@@ -1,5 +1,10 @@
 const OffensiveWordsList = require('./ajds-wordslist.js').BlackList;
 
+// AJDS stands for the Automated James Defense System
+// or the Anti James Defense System
+// first conseptualised by UDXS and Ben at 
+// https://github.com/terminal-atomics/ajds
+
 module.exports.ScoreMember = async function(erismember)
 {
     // Higher score = higher trust factor

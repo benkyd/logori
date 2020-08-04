@@ -166,12 +166,19 @@ function ColourConvert(colour)
 
 async function GuildCreate(guild)
 {
-    
+    const AlreadyGuild = await Database.FetchGuild(guild.id);
+    if (AlreadyGuild == -1) 
+    {
+        Database.NewGuild(guild.id, guild.name, '*', -1, {}, 0);
+    } else {
+        if (AlreadyGuild.name == guild.name) return;
+        Database.UpdateGuildName(guild.id, guild.name);
+    }
 }
 
 async function GuildDelete(guild)
 {
-
+    // TODO: innactive guild tags in the database
 }
 
 async function Warn(message, id)
@@ -588,32 +595,34 @@ async function MessageDelete(message)
     const FallbackChannel = await GetLogChannel(message.channel.guild.id);
     if (FallbackChannel == -1) return;
 
-    const LastAuditEntry = (await message.channel.guild.getAuditLogs(1)).entries[0];
-    
+    const LastAuditEntry = (await message.channel.guild.getAuditLogs(1, undefined, MESSAGE_DELETE)).entries[0];    
     const DeletedMessage = LastAuditEntry.channel.messages.random();
-    Logger.debug(JSON.stringify(DeletedMessage, null, 4))
 
-    let embed = new DiscordEmbed({
-        title: LastAuditEntry.actionType == MESSAGE_DELETE ? 'Message Deleted' : 'User Deleted Own Message',
-        colour: ColourConvert('#E0532B'),
-        url: 'https://logori.xyz',
-        timestamp: new Date(),
-        footer: { text: `ID: ${message.id}` }
-    });
+    // console.log(JSON.stringify(DeletedMessage, null, 4))
 
-    // user DIDDNT deleted own message
-    if (LastAuditEntry.actionType == MESSAGE_DELETE) 
-    {
+    try {
+        var embed = new DiscordEmbed({
+            author: {
+                name: `${DeletedMessage.author.username}#${DeletedMessage.author.discriminator}`,
+                icon_url: DeletedMessage.author.avatarURL,
+                url: 'https://logori.xyz'
+            },
+            title: 'Message Deleted',
+            colour: ColourConvert('#E0532B'),
+            url: 'https://logori.xyz',
+            timestamp: new Date(),
+            footer: { text: `ID: ${message.id}` }
+        });
+    
         embed.field('​', `**Message Owner:** ${DeletedMessage.author.mention}
         **Responsible Moderator**: ${LastAuditEntry.user.mention}
         **Channel:** ${message.channel.mention}
         **Message Content:** ${DeletedMessage.content} `);
-    } else 
+    } catch (e)
     {
-        embed.field('​', `**Message Owner:** ${DeletedMessage.author.mention}
-        **Channel:** ${message.channel.mention}
-        **Message Content:** ${DeletedMessage.content} `);
+        Logger.warn('The stupid messagedelete function messed up again');
     }
+
 
     Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
@@ -622,4 +631,26 @@ async function MessageUpdate(message, oldmessage)
 {
     const FallbackChannel = await GetLogChannel(message.channel.guild.id);
     if (FallbackChannel == -1) return;
+
+    if (!message || !oldmessage) return;
+    if (message.content == oldmessage.content) return;
+
+    let embed = new DiscordEmbed({
+        author: {
+            name: `${message.author.username}#${message.author.discriminator}`,
+            icon_url: message.author.avatarURL,
+            url: 'https://logori.xyz'
+        },
+        title: 'Message Edited',
+        colour: ColourConvert('#328FA8'),
+        url: 'https://logori.xyz',
+        timestamp: new Date(),
+        footer: { text: `ID: ${message.id}` }
+    });
+
+    embed.field('​', `**Message Owner:** ${message.author.mention}
+    **Old Message:**: ${oldmessage.content}
+    **New Message:**: ${message.content}`);
+
+    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
