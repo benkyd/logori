@@ -16,6 +16,7 @@ module.exports.registerCommands = async function()
     Commands['initserv'] = { command: 'initserv', alias: 'nil', name: 'Initialize Server', desc: 'Initialises a new Guild', callback: InitializeGuild, adminOnly: true };
     Commands['setprefix'] = { command: 'setprefix', alias: 'prefix', name: 'Set Prefix', desc: 'Sets the servers prefix for the guild', callback: SetPrefix, adminOnly: true };
     Commands['setfallbackchannel'] = { command: 'setlogchannel', alias: 'setlogchannel', name: 'Set Log Channel', desc: 'Sets the guild log channel to the current channel', callback: SetLogChannel, adminOnly: true };
+    Commands['me'] = { command: 'me', alias: 'nil', name: 'Me', desc: 'Returns the users profile on the logori site', callback: MeCommand, adminOnly: false};
 
     // create a cache of prefix's so that the database doesn't have to be 
     // queried every single time, new guilds should also add themselve's
@@ -109,7 +110,22 @@ module.exports.newMessage = async function(message)
 async function InitializeGuild(message, args)
 {
     // Outlines private policy etc
-    
+    const AlreadyGuild = await Database.FetchGuild(message.guildID);
+    const guild = await Discord.bot.getRESTGuild(message.guildID);
+    if (AlreadyGuild == -1) 
+    {
+        Database.NewGuild(guild.id, guild.name, '*', message.channel.id, {}, 0);
+    } else {
+        if (AlreadyGuild.name != guild.name)
+        {
+            Database.UpdateGuildName(guild.id, message.guild.name);
+        }
+        Database.UpdateGuildLogChannel(guild.id, message.channel.id);
+    }
+
+    Discord.bot.createMessage(message.channel.id, 'Server successfully initialized, the fallback events channel has been set to this channel, you can change this at any time with *setfallbackchannel');
+    Discord.bot.createMessage(message.channel.id, 'By using Logori 2.0, You agree to the private policy clearly outlined at https://logori.xyz/privatepolicy and it is your responsibility as guild administrators to inform members of data collection - as this is a logging bot');
+
 }
 
 async function SetPrefix(message, args)
@@ -132,5 +148,12 @@ async function SetPrefix(message, args)
 
 async function SetLogChannel(message, args)
 {
+    Database.UpdateGuildLogChannel(guild.id, message.channel.id);
 
+    Discord.bot.createMessage(message.channel.id, 'Logging fallback channel set to this channel');
+}
+
+async function MeCommand(message, args)
+{
+    Discord.bot.createMessage(message.channel.id, `All of your data can be accessed here: https://logori.xyz/api/v1/user/${message.author.id}`);
 }
