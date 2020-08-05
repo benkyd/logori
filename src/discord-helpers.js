@@ -1,3 +1,5 @@
+const Discord = require('./discord.js');
+const Logger = require('./logger.js');
 
 module.exports.IsMemberAdmin = (member) => member.permission.has('administrator') || member.id == process.env.BOT_OWNER;
 module.exports.GetGuildCatatory = (guild, catid) => guild.channels.find(c => c.id == catid);
@@ -12,4 +14,13 @@ module.exports.GetMemberJoinPos = (memberid, guild) =>
       if (arr[i].id == memberid) return i; // When you find the user, return it's position
     }
 }
-
+module.exports.SendMessageSafe = async (channelid, message) =>
+{
+    // TODO: make this an actual check instead of a guess
+    try {
+        Discord.bot.createMessage(channelid, message);
+    } catch (e)
+    {
+        Logger.warn(`Unable to send message in channel ${channelid}`);
+    }
+}

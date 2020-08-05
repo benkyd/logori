@@ -76,7 +76,7 @@ module.exports.newMessage = async function(message)
                 command.callback(message, args);
                 return;
             }
-            Discord.bot.createMessage(message.channel.id, 'The `administrator` privaledge is required to execute that command');
+            DiscordHelpers.SendMessageSafe(message.channel.id, 'The `administrator` privaledge is required to execute that command');
             return;
         }
         command.callback(message, args);
@@ -123,8 +123,8 @@ async function InitializeGuild(message, args)
         Database.UpdateGuildLogChannel(guild.id, message.channel.id);
     }
 
-    Discord.bot.createMessage(message.channel.id, 'Server successfully initialized, the fallback events channel has been set to this channel, you can change this at any time with *setfallbackchannel');
-    Discord.bot.createMessage(message.channel.id, 'By using Logori 2.0, You agree to the private policy clearly outlined at https://logori.xyz/privatepolicy and it is your responsibility as guild administrators to inform members of data collection - as this is a logging bot');
+    DiscordHelpers.SendMessageSafe(message.channel.id, 'Server successfully initialized, the fallback events channel has been set to this channel, you can change this at any time with *setfallbackchannel');
+    DiscordHelpers.SendMessageSafe(message.channel.id, 'By using Logori 2.0, You agree to the private policy clearly outlined at https://logori.xyz/privatepolicy and it is your responsibility as guild administrators to inform members of data collection - as this is a logging bot');
 
 }
 
@@ -132,7 +132,7 @@ async function SetPrefix(message, args)
 {
     if (!args[0])
     {
-        Discord.bot.createMessage(message.channel.id, 'You must provide a new prefix');
+        DiscordHelpers.SendMessageSafe(message.channel.id, 'You must provide a new prefix');
         return;
     }
 
@@ -143,17 +143,17 @@ async function SetPrefix(message, args)
     // Update cache
     GuildsAndPrefixs[message.guildID] = NewPrefix;
 
-    Discord.bot.createMessage(message.channel.id, `New prefix for guild : \`${NewPrefix}\``)
+    DiscordHelpers.SendMessageSafe(message.channel.id, `New prefix for guild : \`${NewPrefix}\``);
 }
 
 async function SetLogChannel(message, args)
 {
     Database.UpdateGuildLogChannel(guild.id, message.channel.id);
 
-    Discord.bot.createMessage(message.channel.id, 'Logging fallback channel set to this channel');
+    DiscordHelpers.SendMessageSafe(message.channel.id, 'Logging fallback channel set to this channel');
 }
 
 async function MeCommand(message, args)
 {
-    Discord.bot.createMessage(message.channel.id, `All of your data can be accessed here: https://logori.xyz/api/v1/user/${message.author.id}`);
+    DiscordHelpers.SendMessageSafe(message.channel.id, `All of your data can be accessed here: https://logori.xyz/api/v1/user/${message.author.id}`);
 }

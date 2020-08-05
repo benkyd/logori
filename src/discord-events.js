@@ -102,17 +102,19 @@ const INTEGRATION_DELETE = 82;
 
 // Handlers / Helpers
 
+// TODO: this should cache properly
 async function GetLogChannel(guildID)
 {
     // if there's aready a fallback channel - need to add a clause to update
     // this if the guild's log channel is changed during runtime which is likely
-    if (GuildsAndLogChannels[guildID] != -1) return GuildsAndLogChannels[guildID];
-    // if there's no log channel check if the database has been updated
-    if (GuildsAndLogChannels[guildID] == -1)
-    {
-        const guild = await Database.FetchGuild(guildID);
-        return guild == -1 ? -1 : guild.logchannel;
-    }
+    // if (GuildsAndLogChannels[guildID] != -1) return GuildsAndLogChannels[guildID];
+    // // if there's no log channel check if the database has been updated
+    // if (GuildsAndLogChannels[guildID] == -1)
+    // {
+    // }
+
+    const guild = await Database.FetchGuild(guildID);
+    return guild == -1 ? -1 : guild.logchannel;
 }
 
 function BuildObjDiff(before, after) {
@@ -226,7 +228,7 @@ async function ChannelCreate(channel)
         footer: { text: `ID: ${channel.id}` }
     });
 
-    Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+    DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
 
 }
 
@@ -250,7 +252,7 @@ async function ChannelDelete(channel)
         footer: { text: `ID: ${channel.id}` }
     });
 
-    Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+    DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
 }
 
 async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
@@ -272,13 +274,13 @@ async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
                 { name: 'Author', value: LatestPin.author.mention, inline: true },
                 { name: 'Content', value: LatestPin.content ? LatestPin.content : "Blank Message", inline: false }
             ],
-            colour: '#42A832',
+            colour: ColourConvert('#42A832'),
             url: 'https://logori.xyz',
             timestamp: new Date(timestamp),
             footer: { text: `ID: ${LatestPin.id}` }
         });
     
-        Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+        DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
     } else 
     {
         let embed = new DiscordEmbed({
@@ -292,7 +294,7 @@ async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
             footer: { text: `ID: ${LatestPin.id}` }
         });
     
-        Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+        DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
     }
 }
 
@@ -348,7 +350,7 @@ async function ChannelUpdate(channel, oldchannel)
             
             embed.field('Channel', channel.mention, true);
             
-            Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+            DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
         }
 
         if (channel.permissionOverwrites != oldchannel.permissionOverwrites)
@@ -385,7 +387,7 @@ async function ChannelUpdate(channel, oldchannel)
                     footer: { text: `ID: ${channel.id}` }
                 });
 
-                Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+                DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
                 return;
             }
             // Role overwrite removed
@@ -408,7 +410,7 @@ async function ChannelUpdate(channel, oldchannel)
                     footer: { text: `ID: ${channel.id}` }
                 });
 
-                Discord.bot.createMessage(FallbackChannel, {embed: embed.sendable});
+                DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
                 return;
             }
 
@@ -420,7 +422,7 @@ async function ChannelUpdate(channel, oldchannel)
 
         }
 
-    } else if (Type == voice)
+    } else if (Type == 'Voice')
     {
 
     }
@@ -460,7 +462,7 @@ async function GuildBanAdd(guild, user)
     **Responsible Moderator**: ${Banner.mention}
     **Reason**: ${BanReason}`, false);
 
-    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+    DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
 
 async function GuildBanRemove(guild, user)
@@ -493,7 +495,7 @@ async function GuildBanRemove(guild, user)
     embed.field('​', `**Name**: ${user.mention}
     **Responsible Moderator**: ${Banner.mention}`, false);
 
-    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+    DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
 
 async function GuildEmojisUpdate(guild, emojis, oldemojis)
@@ -563,7 +565,7 @@ async function GuildMemberAdd(guild, member)
 
     // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
 
-    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+    DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
 
 async function GuildMemberRemove(guild, member)
@@ -586,9 +588,10 @@ async function GuildMemberRemove(guild, member)
 
     embed.field('​', `**Member:** ${member.mention}`);
 
-    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+    DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
 
+// FIXME: this is broken af lmao
 async function MessageDelete(message)
 {
     // Logger.debug(JSON.stringify(message, null, 4));
@@ -618,13 +621,12 @@ async function MessageDelete(message)
         **Responsible Moderator**: ${LastAuditEntry.user.mention}
         **Channel:** ${message.channel.mention}
         **Message Content:** ${DeletedMessage.content} `);
+
+        DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
     } catch (e)
     {
         Logger.warn('The stupid messagedelete function messed up again');
     }
-
-
-    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
 }
 
 async function MessageUpdate(message, oldmessage)
@@ -652,5 +654,5 @@ async function MessageUpdate(message, oldmessage)
     **Old Message:**: ${oldmessage.content}
     **New Message:**: ${message.content}`);
 
-    Discord.bot.createMessage(FallbackChannel, { embed: embed.sendable });
+    DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }

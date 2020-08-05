@@ -32,6 +32,12 @@ module.exports.setup = async function()
 
         this.bot.editStatus('online', {name: game, type: type});
 
+        // let array = await this.bot.getMessages('346104470901358595', 20)
+        // for (message of array)
+        // {
+        //     console.log(`${message.author.username}#${message.author.discriminator}: ${message.content}`);
+        // }
+
     });
 
     // settup events
