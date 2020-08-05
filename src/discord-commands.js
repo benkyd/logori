@@ -5,6 +5,8 @@ const Discord = require('./discord.js');
 const DiscordHelpers = require('./discord-helpers.js');
 const DiscordEmbed = require('./discord-embedbuilder.js');
 
+const CATV = require('./harmful.js');
+
 let Commands = [];
 
 let GuildsAndPrefixs = [];
@@ -14,6 +16,7 @@ module.exports.registerCommands = async function()
     Logger.info('Registering commands');
 
     Commands['initserv'] = { command: 'initserv', alias: 'nil', name: 'Initialize Server', desc: 'Initialises a new Guild', callback: InitializeGuild, adminOnly: true };
+	Commands['bedecent'] = { command: 'bedecent', alias: 'nil', name: 'Be decent', desc: 'Makes someone\'s nickname decent', callback: NeutralizeBadNickname, adminOnly: true};
     Commands['setprefix'] = { command: 'setprefix', alias: 'prefix', name: 'Set Prefix', desc: 'Sets the servers prefix for the guild', callback: SetPrefix, adminOnly: true };
     Commands['setfallbackchannel'] = { command: 'setlogchannel', alias: 'setlogchannel', name: 'Set Log Channel', desc: 'Sets the guild log channel to the current channel', callback: SetLogChannel, adminOnly: true };
     Commands['me'] = { command: 'me', alias: 'nil', name: 'Me', desc: 'Returns the users profile on the logori site', callback: MeCommand, adminOnly: false};
@@ -156,4 +159,23 @@ async function SetLogChannel(message, args)
 async function MeCommand(message, args)
 {
     Discord.bot.createMessage(message.channel.id, `All of your data can be accessed here: https://logori.xyz/api/v1/user/${message.author.id}`);
+}
+
+async function NeutralizeBadNickname(message)
+{	
+	if (message.mentions.length < 1)
+	{	
+		Discord.bot.createMessage(message.channel.id, 'You must provide a user');
+		return;
+	}
+
+	let member = message.channel.guild.members.find(m => m.user.id === message.mentions[0].id);
+	let ident = member.nick && member.nick !== '' ? member.nick : member.username;
+	try 
+	{
+		await member.edit({
+			nick: CATV.neutralizeHarmfulIdentifier(ident)
+		});
+	}
+	catch (e) {}
 }

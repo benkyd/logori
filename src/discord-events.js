@@ -7,6 +7,7 @@ const DiscordHelpers = require('./discord-helpers.js');
 const DiscordEmbed = require('./discord-embedbuilder.js');
 
 const ADJSCore = require('./ajds-core.js');
+const CATV = require('./harmful.js')
 
 const Eris = require('eris');
 
@@ -27,7 +28,7 @@ module.exports.setup = async function()
     Discord.bot.on('guildEmojisUpdate', async (guild, emojis, oldemojis) => {GuildEmojisUpdate(guild, emojis, oldemojis)});
     Discord.bot.on('guildMemberAdd', async (guild, member) => {GuildMemberAdd(guild, member)});
     Discord.bot.on('guildMemberRemove', async (guild, member) => {GuildMemberRemove(guild, member)});
-    Discord.bot.on('guildMemberUpdate', async (guild, member, oldmember) => {});
+    Discord.bot.on('guildMemberUpdate', async (guild, member, oldmember) => {}); // TODO(aosync): Check if new nickname is harmful. 
     Discord.bot.on('guildRoleCreate', async (guild, role) => {});
     Discord.bot.on('guildRoleDelete', async (guild, role) => {});
     Discord.bot.on('guildRoleUpdate', async (guild, role, oldrole) => {});
@@ -43,7 +44,7 @@ module.exports.setup = async function()
     Discord.bot.on('messageReactionRemoveEmoji', async (message, emoji) => {});
     Discord.bot.on('messageUpdate', async (message, oldmessage) => {MessageUpdate(message, oldmessage)});
     Discord.bot.on('presenceUpdate', async (member, oldprescence) => {});
-    Discord.bot.on('userUpdate', async (user, olduser) => {});
+    Discord.bot.on('userUpdate', async (user, olduser) => {}); // TODO(aosync): Check if new username is harmful. Set nickname if yes.
     Discord.bot.on('voiceChannelJoin', async (member, newchannel) => {});
     Discord.bot.on('voiceChannelLeave', async (member, oldchannel) => {});
     Discord.bot.on('voiceChannelSwitch', async (member, newchannel, oldchannel) => {});
@@ -560,6 +561,20 @@ async function GuildMemberAdd(guild, member)
     **AJDS Results:**
     *${AJDSScore.literalscore}*
     ${WarningString ? WarningString : ''}`);
+	
+	if (CATV.isIdentifierHarmful(member.username))
+	{
+		embed.field('Username harmfulness', `This member's username is considered harmful.`);
+
+		// How to disable this? Just remove nick management permission haha.
+		try 
+		{
+			await member.edit({
+				nick: CATV.neutralizeHarmfulIdentifier(member.username)
+			});
+		}
+		catch (e) {}
+	}
 
     // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
 
