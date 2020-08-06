@@ -7,7 +7,7 @@ const DiscordHelpers = require('./discord-helpers.js');
 const DiscordEmbed = require('./discord-embedbuilder.js');
 
 const ADJSCore = require('./ajds-core.js');
-const CATV = require('./harmful.js')
+const CATV = require('./harmful.js');
 
 const Eris = require('eris');
 
@@ -609,22 +609,38 @@ async function GuildMemberRemove(guild, member)
 // FIXME: this is broken af lmao
 async function MessageDelete(message)
 {
-    // Logger.debug(JSON.stringify(message, null, 4));
     const FallbackChannel = await GetLogChannel(message.channel.guild.id);
     if (FallbackChannel == -1) return;
+
+	/*
+	 * IMPORTANT(aosync):	Check if audit log entry is recent enough. Because it might cause it to use an entry for a previous action.
+	 *						When this is implemented, we'll just have to assume deleter is author when no recent enough entry is found.
+	 */
 
     const LastAuditEntry = (await message.channel.guild.getAuditLogs(1, undefined, MESSAGE_DELETE)).entries[0];    
     const DeletedMessage = LastAuditEntry.channel.messages.random();
 
-    // console.log(JSON.stringify(DeletedMessage, null, 4))
-
     try {
+		var authorMention = 'Author not found';
+		var author = {
+			name: 'Unknown',
+			url: 'https://logori.xyz'
+		}
+		var responsible = LastAuditEntry ? LastAuditEntry.user.mention : 'Message author';
+		if (message.author) {
+			author.name = message.author.username;
+			author.icon_url = message.author.avatarURL;
+			authorMention = message.author.mention;
+		} else if (DeletedMessage && DeletedMessage.author && DeletedMessage.author.username) {
+			/*	author.name = DeletedMessage.author.username;
+				author.icon_url = DeletedMessage.author.avatarURL;
+				authorMention = DeletedMessage.author.mention;
+			*/
+			// Left blank because currently inaccurate. When the IMPORTANT comment is achieved, the above lines can be uncommented.
+		}
+
         var embed = new DiscordEmbed({
-            author: {
-                name: `${DeletedMessage.author.username}#${DeletedMessage.author.discriminator}`,
-                icon_url: DeletedMessage.author.avatarURL,
-                url: 'https://logori.xyz'
-            },
+            author: author,
             title: 'Message Deleted',
             colour: ColourConvert('#E0532B'),
             url: 'https://logori.xyz',
@@ -632,15 +648,16 @@ async function MessageDelete(message)
             footer: { text: `ID: ${message.id}` }
         });
     
-        embed.field('​', `**Message Owner:** ${DeletedMessage.author.mention}
-        **Responsible Moderator**: ${LastAuditEntry.user.mention}
+        embed.field('​', `**Message Owner:** ${authorMention}
+        **Responsible Moderator**: ${responsible}
         **Channel:** ${message.channel.mention}
-        **Message Content:** ${DeletedMessage.content} `);
+        **Message Content:** ${message.content || 'Message was not cached.'} `);
 
         DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
     } catch (e)
     {
         Logger.warn('The stupid messagedelete function messed up again');
+		// It won't anymore :^).
     }
 }
 
