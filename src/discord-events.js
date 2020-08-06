@@ -606,27 +606,25 @@ async function GuildMemberRemove(guild, member)
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
 
-// FIXME: this is broken af lmao
 async function MessageDelete(message)
 {
     const FallbackChannel = await GetLogChannel(message.channel.guild.id);
     if (FallbackChannel == -1) return;
 
-	/*
-	 * IMPORTANT(aosync):	Check if audit log entry is recent enough. Because it might cause it to use an entry for a previous action.
-	 *						When this is implemented, we'll just have to assume deleter is author when no recent enough entry is found.
-	 */
+
+	// FIXME: Check if audit log entry is recent enough. Because it might cause it to use an entry for a previous action.
+	// When this is implemented, we'll just have to assume deleter is author when no recent enough entry is found.
 
     const LastAuditEntry = (await message.channel.guild.getAuditLogs(1, undefined, MESSAGE_DELETE)).entries[0];    
     const DeletedMessage = LastAuditEntry.channel.messages.random();
 
     try {
-		var authorMention = 'Author not found';
-		var author = {
+		let authorMention = 'Author not found';
+		let author = {
 			name: 'Unknown',
 			url: 'https://logori.xyz'
 		}
-		var responsible = LastAuditEntry ? LastAuditEntry.user.mention : 'Message author';
+		let responsible = LastAuditEntry ? LastAuditEntry.user.mention : 'Message author';
 		if (message.author) {
 			author.name = message.author.username;
 			author.icon_url = message.author.avatarURL;
@@ -639,7 +637,7 @@ async function MessageDelete(message)
 			// Left blank because currently inaccurate. When the IMPORTANT comment is achieved, the above lines can be uncommented.
 		}
 
-        var embed = new DiscordEmbed({
+        let embed = new DiscordEmbed({
             author: author,
             title: 'Message Deleted',
             colour: ColourConvert('#E0532B'),

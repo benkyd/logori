@@ -151,8 +151,19 @@ async function SetPrefix(message, args)
 
 async function SetLogChannel(message, args)
 {
-    Database.UpdateGuildLogChannel(guild.id, message.channel.id);
-
+    const AlreadyGuild = await Database.FetchGuild(message.guildID);
+    const guild = await Discord.bot.getRESTGuild(message.guildID);
+    if (AlreadyGuild == -1) 
+    {
+        Database.NewGuild(guild.id, guild.name, '*', message.channel.id, {}, 0);
+    } else {
+        if (AlreadyGuild.name != guild.name)
+        {
+            Database.UpdateGuildName(guild.id, message.guild.name);
+        }
+        Database.UpdateGuildLogChannel(guild.id, message.channel.id);
+    }
+    
     DiscordHelpers.SendMessageSafe(message.channel.id, 'Logging fallback channel set to this channel');
 }
 

@@ -16,7 +16,8 @@ module.exports.GetMemberJoinPos = (memberid, guild) =>
 }
 module.exports.SendMessageSafe = async (channelid, message) =>
 {
-    // TODO: make this an actual check instead of a guess
+    // TODO: make this an actual check instead of a guess & catch lol
+    
     try {
         Discord.bot.createMessage(channelid, message);
     } catch (e)
