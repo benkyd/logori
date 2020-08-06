@@ -637,9 +637,8 @@ async function MessageDelete(message)
 				authorMention = DeletedMessage.author.mention;
 			*/
 			// Left blank because currently inaccurate. When the IMPORTANT comment is achieved, the above lines can be uncommented.
-		} else {
-			
 		}
+
         var embed = new DiscordEmbed({
             author: author,
             title: 'Message Deleted',
