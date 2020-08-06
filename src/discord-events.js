@@ -7,7 +7,6 @@ const DiscordHelpers = require('./discord-helpers.js');
 const DiscordEmbed = require('./discord-embedbuilder.js');
 
 const ADJSCore = require('./ajds-core.js');
-const CATV = require('./harmful.js');
 
 const Eris = require('eris');
 
@@ -172,7 +171,7 @@ async function GuildCreate(guild)
     const AlreadyGuild = await Database.FetchGuild(guild.id);
     if (AlreadyGuild == -1) 
     {
-        Database.NewGuild(guild.id, guild.name, '*', -1, {}, 0);
+        Database.NewGuild(guild.id, guild.name, '*', -1, {}, {}, 0);
     } else {
         if (AlreadyGuild.name == guild.name) return;
         Database.UpdateGuildName(guild.id, guild.name);
@@ -559,24 +558,27 @@ async function GuildMemberAdd(guild, member)
         }
     } 
 
+    let HarmfulName = ADJSCore.IsIdentifierHarmful(member.username);
+    let HarmfulStr;
+    if (HarmfulName) 
+    {
+        HarmfulStr = '**Username warning: ** This member\'s username is un-pingable\n'
+
+        try {
+            await member.edit({
+                nick: ADJSCore.NeutralizeHarmfulIdentifier(member.username)
+            });
+            HarmfulStr += '**Action Taken:** This member\'s username was changed. This will soon be a configurable option, but for now you if you would not like this feature, you can turn it off by removing the manage nicknames permission from logori.'
+        } catch (e)
+        { }
+    }
+
     embed.field('​', `**Member:** ${member.mention}
     **AJDS Results:**
     *${AJDSScore.literalscore}*
-    ${WarningString ? WarningString : ''}`);
+    ${WarningString ? WarningString : ''}\n
+    ${HarmfulStr ? HarmfulStr : ''}`);
 	
-	if (CATV.isIdentifierHarmful(member.username))
-	{
-		embed.field('Username harmfulness', `This member's username is considered harmful.`);
-
-		// How to disable this? Just remove nick management permission haha.
-		try 
-		{
-			await member.edit({
-				nick: CATV.neutralizeHarmfulIdentifier(member.username)
-			});
-		}
-		catch (e) {}
-	}
 
     // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
 
@@ -604,6 +606,11 @@ async function GuildMemberRemove(guild, member)
     embed.field('​', `**Member:** ${member.mention}`);
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
+}
+
+async function GuildMemberUpdate()
+{
+
 }
 
 async function MessageDelete(message)
@@ -686,3 +693,5 @@ async function MessageUpdate(message, oldmessage)
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
+
+

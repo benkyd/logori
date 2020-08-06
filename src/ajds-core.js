@@ -27,7 +27,7 @@ module.exports.ScoreMember = async function(erismember)
     if (erismember.bot)
     {
         ret.score = 999;
-        ret.warnins.push({warning:'member is bot', severity: 0});
+        ret.warnings.push({warning:'member is bot', severity: 0});
         return ret;
     }
 
@@ -107,4 +107,18 @@ module.exports.NickCheck = function(name)
         if (name.includes(OffensiveWord)) ret.push(OffensiveWord);
 
     return ret;
+}
+
+module.exports.IsIdentifierHarmful = function(ident)
+{
+	return !(/^[a-zA-Z0-9_ ][a-zA-Z0-9_!?-]{3,999}$/.test(ident));
+}
+
+module.exports.NeutralizeHarmfulIdentifier = function(ident)
+{
+	let base = ident.replace(/[^a-zA-Z0-9_ ]/g, '');
+	while (base.length < 3) {
+		base += `UnPingableNick${Math.floor(Math.random()*10 + 0.5)}`;
+	}
+	return base;
 }

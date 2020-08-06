@@ -2,6 +2,8 @@ const Logger = require('./logger.js');
 
 const Sequelize = require('sequelize');
 
+let Database;
+
 let Guild;
 
 module.exports.setup = async function()
@@ -11,17 +13,22 @@ module.exports.setup = async function()
     if (process.env.NODE_ENV == "production")
     {
         Logger.database('Setting up production databse');
+        Database = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASS, {
+            dialect: 'mariadb',
+            logging: Logger.database
+        });
     } else {
         Logger.database('Setting up development databse');
+        Database = new Sequelize({
+            dialect: 'sqlite',
+            storage: process.env.DB_DEV_LOCATION,
+            logging: Logger.database
+        });
     }
 
-    const database = new Sequelize({
-        dialect: 'sqlite',
-        storage: process.env.NODE_ENV == "production" ? process.env.DB_LOCATION : process.env.DB_DEV_LOCATION,
-        logging: Logger.database
-    });
 
-    Guild = database.define('guild', {
+
+    Guild = Database.define('guild', {
         id: {
             type: Sequelize.STRING,
             primaryKey: true,
@@ -30,6 +37,7 @@ module.exports.setup = async function()
         name: Sequelize.STRING,
         prefix: Sequelize.STRING,
         logchannel: Sequelize.STRING,
+        guildsettings: Sequelize.JSON,
         logsettings: Sequelize.JSON, // JSON / Array
         modcases: Sequelize.INTEGER
     }, {
@@ -38,8 +46,8 @@ module.exports.setup = async function()
 
     try 
     {
-        await database.authenticate();
-        await database.sync();
+        await Database.authenticate();
+        await Database.sync();
         Logger.info('Database connection has been established successfully.');
     } catch (error) {
         Logger.panic(`Unable to connect to the database: ${errpr}`);
@@ -47,7 +55,7 @@ module.exports.setup = async function()
 
 }
 
-module.exports.NewGuild = async function(id, name, prefix, logchannel, logsettings, modcases) 
+module.exports.NewGuild = async function(id, name, prefix, logchannel, guildsettings, logsettings, modcases) 
 {
     try {
         let user = await Guild.create({
@@ -55,6 +63,7 @@ module.exports.NewGuild = async function(id, name, prefix, logchannel, logsettin
             name: name,
             prefix: prefix,
             logchannel: logchannel, // -1 if not set
+            guildsettings: guildsettings,
             logsettings: logsettings,
             modcases: modcases
         });
