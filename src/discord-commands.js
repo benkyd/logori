@@ -5,7 +5,7 @@ const Discord = require('./discord.js');
 const DiscordHelpers = require('./discord-helpers.js');
 const DiscordEmbed = require('./discord-embedbuilder.js');
 
-const CATV = require('./harmful.js');
+const AJDSCore = require('./ajds-core.js');
 
 let Commands = [];
 
@@ -16,7 +16,7 @@ module.exports.registerCommands = async function()
     Logger.info('Registering commands');
 
     Commands['initserv'] = { command: 'initserv', alias: 'nil', name: 'Initialize Server', desc: 'Initialises a new Guild', callback: InitializeGuild, adminOnly: true };
-	Commands['bedecent'] = { command: 'bedecent', alias: 'nil', name: 'Be decent', desc: 'Makes someone\'s nickname decent', callback: NeutralizeBadNickname, adminOnly: true};
+	Commands['fixbadnick'] = { command: 'fixbadnick', alias: 'fixnick', name: 'Fix User Nickname', desc: 'Makes someone\'s nickname decent & pingable', callback: NeutralizeBadNickname, adminOnly: true};
     Commands['setprefix'] = { command: 'setprefix', alias: 'prefix', name: 'Set Prefix', desc: 'Sets the servers prefix for the guild', callback: SetPrefix, adminOnly: true };
     Commands['setfallbackchannel'] = { command: 'setlogchannel', alias: 'setlogchannel', name: 'Set Log Channel', desc: 'Sets the guild log channel to the current channel', callback: SetLogChannel, adminOnly: true };
     Commands['me'] = { command: 'me', alias: 'nil', name: 'Me', desc: 'Returns the users profile on the logori site', callback: MeCommand, adminOnly: false};
@@ -163,7 +163,7 @@ async function SetLogChannel(message, args)
         }
         Database.UpdateGuildLogChannel(guild.id, message.channel.id);
     }
-    
+
     DiscordHelpers.SendMessageSafe(message.channel.id, 'Logging fallback channel set to this channel');
 }
 
@@ -176,7 +176,7 @@ async function NeutralizeBadNickname(message)
 {	
 	if (message.mentions.length < 1)
 	{	
-		Discord.bot.createMessage(message.channel.id, 'You must provide a user');
+		DiscordHelpers.SendMessageSafe(message.channel.id, 'You must provide a user');
 		return;
 	}
 
@@ -185,8 +185,10 @@ async function NeutralizeBadNickname(message)
 	try 
 	{
 		await member.edit({
-			nick: CATV.neutralizeHarmfulIdentifier(ident)
-		});
+			nick: AJDSCore.NeutralizeHarmfulIdentifier(ident)
+        });
+        
+        DiscordHelpers.SendMessageSafe(message.channel.id, '`1` Nickname successfully updated');
 	}
-	catch (e) {}
+    catch (e) {}
 }
