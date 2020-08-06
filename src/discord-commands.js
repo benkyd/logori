@@ -50,7 +50,7 @@ module.exports.newMessage = async function(message)
             } catch (e) {
                 GuildName = 'not defined';
             }
-            Database.NewGuild(message.guildID, GuildName, '*', -1, {}, 0);
+            Database.NewGuild(message.guildID, GuildName, '*', -1, {}, {}, 0);
             GuildsAndPrefixs[message.guildID] = '*'
         } else 
         {
@@ -117,7 +117,7 @@ async function InitializeGuild(message, args)
     const guild = await Discord.bot.getRESTGuild(message.guildID);
     if (AlreadyGuild == -1) 
     {
-        Database.NewGuild(guild.id, guild.name, '*', message.channel.id, {}, 0);
+        Database.NewGuild(guild.id, guild.name, '*', message.channel.id, {}, {}, 0);
     } else {
         if (AlreadyGuild.name != guild.name)
         {
@@ -155,7 +155,7 @@ async function SetLogChannel(message, args)
     const guild = await Discord.bot.getRESTGuild(message.guildID);
     if (AlreadyGuild == -1) 
     {
-        Database.NewGuild(guild.id, guild.name, '*', message.channel.id, {}, 0);
+        Database.NewGuild(guild.id, guild.name, '*', message.channel.id, {}, {}, 0);
     } else {
         if (AlreadyGuild.name != guild.name)
         {

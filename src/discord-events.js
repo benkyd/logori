@@ -171,7 +171,7 @@ async function GuildCreate(guild)
     const AlreadyGuild = await Database.FetchGuild(guild.id);
     if (AlreadyGuild == -1) 
     {
-        Database.NewGuild(guild.id, guild.name, '*', -1, {}, 0);
+        Database.NewGuild(guild.id, guild.name, '*', -1, {}, {}, 0);
     } else {
         if (AlreadyGuild.name == guild.name) return;
         Database.UpdateGuildName(guild.id, guild.name);
@@ -609,6 +609,9 @@ async function GuildMemberRemove(guild, member)
 }
 
 async function GuildMemberUpdate()
+{
+
+}
 
 async function MessageDelete(message)
 {

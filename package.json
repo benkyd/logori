@@ -15,6 +15,7 @@
     "dotenv": "^8.2.0",
     "eris": "^0.13.3",
     "express-authentication": "^0.3.2",
+    "mariadb": "^2.4.2",
     "moment": "^2.27.0",
     "sequelize": "^6.3.3",
     "sqlite3": "^5.0.0"

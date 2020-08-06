@@ -27,7 +27,7 @@ module.exports.ScoreMember = async function(erismember)
     if (erismember.bot)
     {
         ret.score = 999;
-        ret.warnins.push({warning:'member is bot', severity: 0});
+        ret.warnings.push({warning:'member is bot', severity: 0});
         return ret;
     }
 
