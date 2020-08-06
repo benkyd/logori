@@ -14,7 +14,8 @@ module.exports.setup = async function()
     
     if (!process.env.BOT_TOKEN) Logger.panic('No BOT_TOKEN in .env file!')
 
-    this.bot = new Eris(process.env.BOT_TOKEN, {allowedMentions: false, restMode: true});
+    this.bot = new Eris(process.env.NODE_ENV == 'production' ? process.env.BOT_TOKEN : process.env.BOT_DEV_TOKEN,
+                       {allowedMentions: false, restMode: true});
     
     this.bot.on('ready', async () => {
         Logger.info(`Discord logged in as ${this.bot.user.username}#${this.bot.user.discriminator}`);

@@ -3,12 +3,14 @@ const moment = require('moment');
 const fs = require('fs');
 
 let LogLevel = 1;
-let Dialect = 'SQLITE';
+let Dialect;
 let logPath = 'logs.log';
 let dateFormat = 'DD-MM-YY HH:mm:ss'
 
 module.exports.init = function(path) {
     if (path) logPath = path;
+
+    Dialect = process.env.NODE_ENV == 'production' ? 'MARIADB' : 'SQLITE';
 
     if (!fs.existsSync(logPath)) {
         fs.writeFileSync(logPath, '');
