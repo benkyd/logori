@@ -42,7 +42,7 @@ module.exports.setup = async function()
         await database.sync();
         Logger.info('Database connection has been established successfully.');
     } catch (error) {
-        Logger.panic('Unable to connect to the database:', error);
+        Logger.panic(`Unable to connect to the database: ${errpr}`);
     }
 
 }
