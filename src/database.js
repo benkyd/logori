@@ -13,7 +13,7 @@ module.exports.setup = async function()
     if (process.env.NODE_ENV == "production")
     {
         Logger.database('Setting up production databse');
-        Database = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASS, {
+        Database = new Sequelize(`mariadb://${process.env.DB_LOCATION}:3306/${process.env.DB_DATABASE}?user=${process.env.DB_USER}&password=${process.env.DB_PASS}`, {
             dialect: 'mariadb',
             logging: Logger.database
         });
