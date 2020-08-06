@@ -122,13 +122,12 @@ module.exports.NickCheck = function(name)
 
 module.exports.IsIdentifierHarmful = function(ident)
 {
-	return !(/^[a-zA-Z0-9_][a-zA-Z0-9_!?-]{3,20}$/.test(ident));
+	return !(/^[a-zA-Z0-9_ ][a-zA-Z0-9_!?-]{3,999}$/.test(ident));
 }
 
 module.exports.NeutralizeHarmfulIdentifier = function(ident)
 {
-	let base = ident.replace(/[^a-zA-Z0-9_]/g, '');
-	if (base.length > 20) base = base.slice(0, 20);
+	let base = ident.replace(/[^a-zA-Z0-9_ ]/g, '');
 	while (base.length < 3) {
 		base += `UnPingableNick${Math.floor(Math.random()*10 + 0.5)}`;
 	}

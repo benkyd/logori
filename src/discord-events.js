@@ -608,6 +608,8 @@ async function GuildMemberRemove(guild, member)
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
 
+async function GuildMemberUpdate()
+
 async function MessageDelete(message)
 {
     const FallbackChannel = await GetLogChannel(message.channel.guild.id);
@@ -688,3 +690,5 @@ async function MessageUpdate(message, oldmessage)
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
+
+
