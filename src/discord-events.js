@@ -622,8 +622,9 @@ async function MessageDelete(message)
 	// FIXME: Check if audit log entry is recent enough. Because it might cause it to use an entry for a previous action.
 	// When this is implemented, we'll just have to assume deleter is author when no recent enough entry is found.
 
-    const LastAuditEntry = (await message.channel.guild.getAuditLogs(1, undefined, MESSAGE_DELETE)).entries[0];    
-    const DeletedMessage = LastAuditEntry.channel.messages.random();
+    // const LastAuditEntry = (await message.channel.guild.getAuditLogs(1, undefined, MESSAGE_DELETE)).entries[0];    
+	const LastAuditEntry = await DiscordHelpers.GetRecentEnoughAuditLogEntry(message.channel.guild.id, null, MESSAGE_DELETE);    
+    const DeletedMessage = LastAuditEntry ? LastAuditEntry.channel.messages.random() : null;
 
     try {
 		let authorMention = 'Author not found';
