@@ -619,10 +619,6 @@ async function MessageDelete(message)
     if (FallbackChannel == -1) return;
 
 
-	// FIXME: Check if audit log entry is recent enough. Because it might cause it to use an entry for a previous action.
-	// When this is implemented, we'll just have to assume deleter is author when no recent enough entry is found.
-
-    // const LastAuditEntry = (await message.channel.guild.getAuditLogs(1, undefined, MESSAGE_DELETE)).entries[0];    
 	const LastAuditEntry = await DiscordHelpers.GetRecentEnoughAuditLogEntry(message.channel.guild.id, null, MESSAGE_DELETE);    
     const DeletedMessage = LastAuditEntry ? LastAuditEntry.channel.messages.random() : null;
 
@@ -637,13 +633,8 @@ async function MessageDelete(message)
 			author.name = message.author.username;
 			author.icon_url = message.author.avatarURL;
 			authorMention = message.author.mention;
-		} else if (DeletedMessage && DeletedMessage.author && DeletedMessage.author.username) {
-			/*	author.name = DeletedMessage.author.username;
-				author.icon_url = DeletedMessage.author.avatarURL;
-				authorMention = DeletedMessage.author.mention;
-			*/
-			// Left blank because currently inaccurate. When the IMPORTANT comment is achieved, the above lines can be uncommented.
 		}
+		// What gets filled in the channel object of the audit log entry actually comes from the cache, it seems, so we can't know at all :(.
 
         let embed = new DiscordEmbed({
             author: author,
