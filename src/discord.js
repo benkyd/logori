@@ -11,10 +11,17 @@ module.exports.bot;
 module.exports.setup = async function()
 {
     Logger.info('Setting up discord bot');
-    
-    if (!process.env.BOT_TOKEN) Logger.panic('No BOT_TOKEN in .env file!')
-
-    this.bot = new Eris(process.env.NODE_ENV == 'production' ? process.env.BOT_TOKEN : process.env.BOT_DEV_TOKEN,
+   
+	let isProduction = process.env.NODE_ENV == 'production';
+	let token = isProduction ? process.env.BOT_TOKEN : process.env.BOT_DEV_TOKEN;
+    if (!token) {
+		if (isProduction && process.env.BOT_DEV_TOKEN) {
+			Logger.warn('No production token specified, using dev token as fallback.');
+			token = process.env.BOT_DEV_TOKEN;
+		}
+		else Logger.panic('No *_TOKEN specified in .env file!'); // Not fallbacking to production when explicitly stated in "dev" lol
+	}
+    this.bot = new Eris(token,
                        {allowedMentions: false, restMode: true});
     
     this.bot.on('ready', async () => {
