@@ -218,15 +218,14 @@ async function ChannelCreate(channel)
 
     let embed = new DiscordEmbed({
         title: `${Type} Channel Created`,
-        fields: [
-            { name: 'Name', value: channel.mention, inline: true },
-            { name: 'Parent Catagory', value: DiscordHelpers.GetGuildCatatory(channel.guild, channel.parentID).name, inline: true }
-        ],
         colour: ColourConvert('#42A832'),
         url: 'https://logori.xyz',
         timestamp: new Date(),
         footer: { text: `ID: ${channel.id}` }
     });
+
+    embed.field('​', `**Name:** ${channel.name}\n` +
+    `**Parent Catagory:** ${DiscordHelpers.GetGuildCatatory(channel.guild, channel.parentID).name}`)
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
 
@@ -242,15 +241,14 @@ async function ChannelDelete(channel)
 
     let embed = new DiscordEmbed({
         title: `${Type} Channel Deleted`,
-        fields: [
-            { name: 'Name', value: channel.name, inline: true },
-            { name: 'Parent Catagory', value: DiscordHelpers.GetGuildCatatory(channel.guild, channel.parentID).name, inline: true }
-        ],
         colour: ColourConvert('#E0532B'),
         url: 'https://logori.xyz',
         timestamp: new Date(),
         footer: { text: `ID: ${channel.id}` }
     });
+
+    embed.field('​', `**Name:** ${channel.name}\n` +
+    `**Parent Catagory:** ${DiscordHelpers.GetGuildCatatory(channel.guild, channel.parentID).name}`)
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
 }
@@ -269,31 +267,29 @@ async function ChannelPinUpdate(channel, timestamp, oldtimestamp)
     {
         let embed = new DiscordEmbed({
             title: `Pin Created`,
-            fields: [
-                { name: 'Channel', value: channel.mention, inline: true },
-                { name: 'Author', value: LatestPin.author.mention, inline: true },
-                { name: 'Content', value: LatestPin.content ? LatestPin.content : "Blank Message", inline: false }
-            ],
             colour: ColourConvert('#42A832'),
             url: 'https://logori.xyz',
             timestamp: new Date(timestamp),
             footer: { text: `ID: ${LatestPin.id}` }
         });
     
+        embed.field('​', `**Channel:** ${channel.mention}\n` +
+        `**Author:** ${LatestPin.author.mention}\n` +
+        `**Content:** ${LatesPin.content}`);
+
         DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
     } else 
     {
         let embed = new DiscordEmbed({
             title: `Pin Removed`,
-            fields: [
-                { name: 'Channel', value: channel.mention, inline: true },
-            ],
             colour: ColourConvert('#E0532B'),
             url: 'https://logori.xyz',
             timestamp: new Date(timestamp),
             footer: { text: `ID: ${LatestPin.id}` }
         });
     
+        embed.field('​', `**Channel:** ${channel.mention}`);
+
         DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
     }
 }
@@ -323,6 +319,10 @@ async function ChannelUpdate(channel, oldchannel)
                 timestamp: new Date(),
                 footer: { text: `ID: ${channel.id}` }
             });
+
+            // TODO: make these more efficient embeds
+            // i literally cba to do it rn, aho if you read
+            // this can you do it please lol
 
             // these include zws characters
             embed.field('​', '**Before**', true); 
@@ -387,6 +387,9 @@ async function ChannelUpdate(channel, oldchannel)
                     footer: { text: `ID: ${channel.id}` }
                 });
 
+                embed.field('​', `**Channel:** ${channel.mention}\n` +
+                `**Role Overwrite:** ${Role.name}`);
+
                 DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
                 return;
             }
@@ -400,20 +403,20 @@ async function ChannelUpdate(channel, oldchannel)
                 
                 let embed = new DiscordEmbed({
                     title: 'Channel Overwrite Removed',
-                    fields: [
-                        { name: 'Channel', value: channel.mention, inline: true },
-                        { name: 'Role Overwrite', value: Role.name, inline: true },
-                    ],
                     colour: ColourConvert('#E0532B'),
                     url: 'https://logori.xyz',
                     timestamp: new Date(),
                     footer: { text: `ID: ${channel.id}` }
                 });
 
+                embed.field('​', `**Channel:** ${channel.mention}\n` +
+                `**Role Overwrite:** ${Role.name}`);
+
                 DiscordHelpers.SendMessageSafe(FallbackChannel, {embed: embed.sendable});
                 return;
             }
 
+            // TODO: DO THIS !!
             // find the overwrites that have changed, there is no chance of a new overwrite
             // or a deleted one, a diff must be constructed
             // TODO : make an ambigous role overwrite diff
@@ -458,9 +461,9 @@ async function GuildBanAdd(guild, user)
         footer: { text: `ID: ${user.id}` }
     });
 
-    embed.field('​', `**Name**: ${user.mention}
-    **Responsible Moderator**: ${Banner.mention}
-    **Reason**: ${BanReason}`, false);
+    embed.field('​', `**Name**: ${user.mention}\n` +
+    `**Responsible Moderator**: ${Banner.mention}\n` +
+    `**Reason**: ${BanReason}\n`, false);
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
@@ -492,8 +495,8 @@ async function GuildBanRemove(guild, user)
         footer: { text: `ID: ${user.id}` }
     });
 
-    embed.field('​', `**Name**: ${user.mention}
-    **Responsible Moderator**: ${Banner.mention}`, false);
+    embed.field('​', `**Name**: ${user.mention}\n` +
+    `**Responsible Moderator**: ${Banner.mention}`, false);
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
@@ -573,14 +576,11 @@ async function GuildMemberAdd(guild, member)
         { }
     }
 
-    embed.field('​', `**Member:** ${member.mention}
-    **AJDS Results:**
-    *${AJDSScore.literalscore}*
-    ${WarningString ? WarningString : ''}\n
-    ${HarmfulStr ? HarmfulStr : ''}`);
-	
-
-    // embed.field('​', `${member.mention} is ${AddOrdinalSuffix(DiscordHelpers.GetMemberJoinPos(member.id, guild))} to join`);
+    embed.field('​', `**Member:** ${member.mention}\n` +
+    `**AJDS Results:**\n` +
+    `*${AJDSScore.literalscore}*\n` +
+    `${WarningString ? WarningString : ''}\n` +
+    `${HarmfulStr ? HarmfulStr : ''}`);
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
@@ -685,5 +685,3 @@ async function MessageUpdate(message, oldmessage)
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
-
-
