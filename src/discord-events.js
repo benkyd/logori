@@ -653,10 +653,10 @@ async function MessageDelete(message)
             footer: { text: `ID: ${message.id}` }
         });
     
-        embed.field('​', `**Message Owner:** ${authorMention}
-        **Responsible Moderator**: ${responsible}
-        **Channel:** ${message.channel.mention}
-        **Message Content:** ${message.content || 'Message was not cached.'} `);
+        embed.field('​', `**Message Owner:** ${authorMention}\n` + 
+        `**Responsible Moderator**: ${responsible}\n` + 
+        `**Channel:** ${message.channel.mention}\n`
+        `**Message Content:** ${message.content || 'Message was not cached.'} `);
 
         DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
     } catch (e)
@@ -687,9 +687,9 @@ async function MessageUpdate(message, oldmessage)
         footer: { text: `ID: ${message.id}` }
     });
 
-    embed.field('​', `**Message Owner:** ${message.author.mention}
-    **Old Message:**: ${oldmessage.content}
-    **New Message:**: ${message.content}`);
+    embed.field('​', `**Message Owner:** ${message.author.mention}\n` +
+    `**Old Message:** ${oldmessage.content}\n` + 
+    `**New Message:*: ${message.content}`);
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
