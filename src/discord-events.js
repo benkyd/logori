@@ -681,7 +681,7 @@ async function MessageUpdate(message, oldmessage)
 
     embed.field('​', `**Message Owner:** ${message.author.mention}\n` +
     `**Old Message:** ${oldmessage.content}\n` + 
-    `**New Message:**: ${message.content}`);
+    `**New Message:** ${message.content}`);
 
     DiscordHelpers.SendMessageSafe(FallbackChannel, { embed: embed.sendable });
 }
