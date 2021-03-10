@@ -1,5 +1,7 @@
 # logori
 
+[Logori's Website](https://logori.xyz)
+
 ## Installation
 
 Clone the repo, run `npm install`, run the `index.js` once, then fill the config.json, then rerun the bot.  
